@@ -2,7 +2,7 @@
 #include <box2d/box2d.h>
 #include <raylib.h>
 
-void DrawBody(b2BodyId id) {
+void DrawBody(b2BodyId id, Color color) {
     // Compute AABB
     b2ShapeId shapes[1]; // Only one shape for now
     b2Body_GetShapes(id, shapes, 1);
@@ -21,7 +21,7 @@ void DrawBody(b2BodyId id) {
     b2Vec2 extents = b2AABB_Extents(aabb);
     b2Vec2 position = b2Body_GetPosition(id); // Get position of dynamic body
     b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
-    DrawRectanglePro({ position.x, - position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, - b2Rot_GetAngle(rotation) * RAD2DEG, GREEN); // Draw ground
+    DrawRectanglePro({ position.x, - position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, - b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
 }
 int main() {
     // Window Definition
@@ -89,8 +89,8 @@ int main() {
         ClearBackground(RAYWHITE);
         BeginMode2D(viewport);
 
-        DrawBody(bodyId);
-        DrawBody(groundId);
+        DrawBody(bodyId, RED);
+        DrawBody(groundId, BLUE);
 
         EndMode2D();
         EndDrawing();
