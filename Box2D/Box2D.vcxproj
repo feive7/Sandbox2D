@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\box2d\include;C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\raylib\include;./;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\box2d\lib;C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\raylib\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>./box2d/include;./raylib/include;./;$(IncludePath)</IncludePath>
+    <LibraryPath>.\box2d\lib;.\raylib\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\box2d\include;C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\raylib\include;./;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\box2d\lib;C:\Users\rolan\OneDrive\Documents\Roland C++\Box2D\Box2D\raylib\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>./box2d/include;./raylib/include;./;$(IncludePath)</IncludePath>
+    <LibraryPath>.\box2d\lib;.\raylib\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
