@@ -1,55 +1,48 @@
 #include <iostream>
+#include <vector>
 #include <box2d/box2d.h>
 #include <raylib.h>
+#include <rlgl.h>
+#include <raybox.h>
+#include <BodyOps.h>
 
-void DrawBody(b2BodyId id, Color color) {
-    // Compute AABB
-    b2ShapeId shapes[10];
-    b2Body_GetShapes(id, shapes, 10);
+struct Body {
+    b2BodyId id;
+    Color color;
+    void draw() {
+        DrawBody(id, color);
+    }
+};
 
-    for (int i = 0; i < b2Body_GetShapeCount(id); i++) {
-        b2ShapeId shape = shapes[i]; // Shape
-        int shapeType = b2Shape_GetType(shape);
 
-        switch (shapeType) {
-        case b2_polygonShape: {
-            b2Polygon poly = b2Shape_GetPolygon(shape); // Polygon
 
-            // Get Transformation
-            b2Transform transformation = b2Body_GetTransform(id);
+void ResetScene(b2WorldId worldId, std::vector<Body>& bodies) {
+    for (Body& body : bodies) {
+        b2DestroyBody(body.id); // Destroy all bodies
+    }
+    bodies.clear(); // Clear boxes
 
-            b2Transform unrotated;
-            unrotated.p = transformation.p;
-            unrotated.q = b2Rot_identity;
+    bodies.push_back({ CreateBox(worldId, {-120.0f,0.0f}, {10.0f,110.0f}, false), GREEN });
+    bodies.push_back({ CreateBox(worldId, {120.0f,0.0f}, {10.0f,110.0f}, false), GREEN });
+    bodies.push_back({ CreateBox(worldId, {0.0f,-120.0f}, {110.0f,10.0f}, false), GREEN });
+    bodies.push_back({ CreateBox(worldId, {0.0f,120.0f}, {110.0f,10.0f}, false), GREEN});
 
-            b2AABB aabb = b2ComputePolygonAABB(&poly, unrotated);
-            b2Vec2 extents = b2AABB_Extents(aabb);
-            b2Vec2 position = b2Body_GetPosition(id); // Get position of dynamic body
-            b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
-            DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
-            break;
-        }
-        case b2_circleShape: {
-            b2Circle circle = b2Shape_GetCircle(shape);
-            b2Transform transformation = b2Body_GetTransform(id);
-            b2Vec2 position = b2Body_GetPosition(id); // Get position of dynamic body
-            b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
-            DrawCircleV({ position.x, position.y }, circle.radius, color); // Draw circle
-            break;
-        }
-        }
+    for (int i = 0; i < 100; i++) {
+        float x = GetRandomValue(-100, 100);
+        float y = GetRandomValue(-100, 100);
+        bodies.push_back({ CreateBall(worldId, {x,y}, 3.0f, true), RandomColor()});
     }
 }
 int main() {
     // Window Definition
     const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenHeight = 800;
     InitWindow(screenWidth, screenHeight, "Box2D");
     SetTargetFPS(60);
 
     // Viewport Definition
     Camera2D viewport;
-    viewport.offset = { 400.0f, 225.0f };
+    viewport.offset = { 400.0f, 400.0f };
     viewport.rotation = 180;
     viewport.target = { 0.0f,0.0f };
     viewport.zoom = 3.0f;
@@ -61,49 +54,9 @@ int main() {
     
     b2WorldId worldId = b2CreateWorld(&worldDef);
 
-    // Ground Definition
-    b2BodyDef groundBodyDef = b2DefaultBodyDef();
-    groundBodyDef.position = { 0.0f, -10.0f };
-
-    b2BodyId groundId = b2CreateBody(worldId, &groundBodyDef);
-
-    b2Polygon groundBox = b2MakeBox(50.0f, 2.0f);
-
-    b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-    b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
-
-	b2Body_SetTransform(groundId, { 0.0f, -10.0f }, b2MakeRot(PI / 16.0f)); // Set ground position
-
     // Dynamic Body Definition
-    b2BodyDef boxBodyDef = b2DefaultBodyDef();
-    boxBodyDef.type = b2_dynamicBody;
-    boxBodyDef.position = { 0.0f, 40.0f };
-    b2BodyId boxBodyId = b2CreateBody(worldId, &boxBodyDef);
-
-    b2Polygon dynamicBox = b2MakeBox(20.0f, 10.0f);
-
-    b2ShapeDef boxShapeDef = b2DefaultShapeDef();
-    boxShapeDef.density = 1.0f;
-    boxShapeDef.material.friction = 0.3f;
-
-    b2CreatePolygonShape(boxBodyId, &boxShapeDef, &dynamicBox);
-
-    // Circle Body Definition
-    b2BodyDef circleBodyDef = b2DefaultBodyDef();
-    circleBodyDef.type = b2_dynamicBody;
-    circleBodyDef.position = { 0.0f, 20.0f };
-    b2BodyId circleBodyId = b2CreateBody(worldId, &circleBodyDef);
-
-    b2Circle dynamicCircle;
-    dynamicCircle.center = { 0.0f,0.0f };
-    dynamicCircle.radius = 10.0f;
-
-    b2ShapeDef circleShapeDef = b2DefaultShapeDef();
-
-    b2CreateCircleShape(circleBodyId, &circleShapeDef, &dynamicCircle);
-
-	// Mouse Joint Definition
-
+    std::vector<Body> bodies;
+    ResetScene(worldId, bodies); // Reset scene
 
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
@@ -113,30 +66,37 @@ int main() {
     while (!WindowShouldClose()) {
         // Handle inputs
         float mwMove = GetMouseWheelMove();
+        if (IsKeyPressed(KEY_R)) {
+			ResetScene(worldId, bodies); // Reset scene
+        }
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
 		Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), viewport);
-        //b2Body_SetTransform(circleBodyId, { mousePos.x,mousePos.y }, b2Rot_identity);
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(),viewport);
 
+            DragBody(bodies.back().id, {mPos.x,mPos.y});
+        }
+        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+
+        }
         // Simulate
         float deltaTime = GetFrameTime();
         b2World_Step(worldId, deltaTime, subStepCount);
-        
 
-        b2Vec2 position = b2Body_GetPosition(boxBodyId); // Get position of dynamic body
-        b2Rot rotation = b2Body_GetRotation(boxBodyId); // Get rotation of dynamic body
-
-        b2Vec2 groundPos = b2Body_GetPosition(groundId);
-        b2Rot groundRot = b2Body_GetRotation(groundId);
         BeginDrawing();
         ClearBackground(RAYWHITE);
         BeginMode2D(viewport);
 
-        DrawBody(boxBodyId, RED);
-        DrawBody(circleBodyId, GREEN);
-        DrawBody(groundId, BLUE);
+        DrawLine(0, 3, 0, -3, GRAY);
+        DrawLine(3, 0, -3, 0, GRAY);
 
+        for (Body& body : bodies) {
+            body.draw();
+        }
+        
         EndMode2D();
         EndDrawing();
     }

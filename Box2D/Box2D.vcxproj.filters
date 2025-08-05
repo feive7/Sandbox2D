@@ -19,4 +19,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="raybox.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BodyOps.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
