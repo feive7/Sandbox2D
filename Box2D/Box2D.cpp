@@ -6,7 +6,7 @@
 #include <raybox.h>
 #include <BodyOps.h>
 
-struct Body {
+struct RayBody {
     b2BodyId id;
     Color color;
     void draw() {
@@ -14,10 +14,13 @@ struct Body {
     }
 };
 
+struct {
+    bool active;
+    b2BodyId bodyId;
+} Selection;
 
-
-void ResetScene(b2WorldId worldId, std::vector<Body>& bodies) {
-    for (Body& body : bodies) {
+void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
+    for (RayBody& body : bodies) {
         b2DestroyBody(body.id); // Destroy all bodies
     }
     bodies.clear(); // Clear boxes
@@ -26,12 +29,6 @@ void ResetScene(b2WorldId worldId, std::vector<Body>& bodies) {
     bodies.push_back({ CreateBox(worldId, {120.0f,0.0f}, {10.0f,110.0f}, false), GREEN });
     bodies.push_back({ CreateBox(worldId, {0.0f,-120.0f}, {110.0f,10.0f}, false), GREEN });
     bodies.push_back({ CreateBox(worldId, {0.0f,120.0f}, {110.0f,10.0f}, false), GREEN});
-
-    for (int i = 0; i < 100; i++) {
-        float x = GetRandomValue(-100, 100);
-        float y = GetRandomValue(-100, 100);
-        bodies.push_back({ CreateBall(worldId, {x,y}, 3.0f, true), RandomColor()});
-    }
 }
 int main() {
     // Window Definition
@@ -55,7 +52,7 @@ int main() {
     b2WorldId worldId = b2CreateWorld(&worldDef);
 
     // Dynamic Body Definition
-    std::vector<Body> bodies;
+    std::vector<RayBody> bodies;
     ResetScene(worldId, bodies); // Reset scene
 
     // Simulation setup
@@ -73,14 +70,32 @@ int main() {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
 		Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), viewport);
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(),viewport);
-
-            DragBody(bodies.back().id, {mPos.x,mPos.y});
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+            b2Vec2 mVec = { mPos.x,mPos.y };
+            for (RayBody body : bodies) {
+                b2AABB test = b2Body_ComputeAABB(body.id);
+                if (AABBContains(test, mVec)) {
+                    Selection.active = true;
+                    Selection.bodyId = body.id;
+                    break;
+                }
+            }
         }
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            Selection.active = false;
+        }
+        if (Selection.active) {
+            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+            b2Vec2 mVec = { mPos.x,mPos.y };
+            DragBody(Selection.bodyId, mVec);
+        }
+
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
             Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-
+            b2Vec2 mVec = { mPos.x,mPos.y };
+            RayBody newBody = { CreateBall(worldId, mVec, 10.0f, true), RandomColor() };
+            bodies.push_back(newBody);
         }
         // Simulate
         float deltaTime = GetFrameTime();
@@ -93,9 +108,16 @@ int main() {
         DrawLine(0, 3, 0, -3, GRAY);
         DrawLine(3, 0, -3, 0, GRAY);
 
-        for (Body& body : bodies) {
+        for (RayBody& body : bodies) {
             body.draw();
+
+            b2JointId jointArray[3];
+            b2Body_GetJoints(body.id, jointArray, 3);
+            for (int i = 0; i < b2Body_GetJointCount(body.id); i++) {
+                DrawJoint(jointArray[i]);
+            }
         }
+
         
         EndMode2D();
         EndDrawing();

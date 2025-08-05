@@ -39,6 +39,9 @@ void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
     jointDef.length = length; // Set length
     b2CreateDistanceJoint(id, &jointDef); // Create the joint
 }
+void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB) {
+    HingeBodies(id, bodyA, bodyB, b2Distance(b2Body_GetPosition(bodyA), b2Body_GetPosition(bodyB)));
+}
 void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
     b2PrismaticJointDef jointDef = b2DefaultPrismaticJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
@@ -58,4 +61,9 @@ void DragBody(b2BodyId bodyId, b2Vec2 point, float force = 100.0f) {
     b2Vec2 final = b2MulSV(force, vel);
 
     b2Body_SetLinearVelocity(bodyId, final);
+}
+bool AABBContains(b2AABB aabb, b2Vec2 vec2) {
+    if (aabb.lowerBound.x < vec2.x && aabb.lowerBound.y < vec2.y && aabb.upperBound.x > vec2.x && aabb.upperBound.y > vec2.y)
+        return true;
+    return false;
 }

@@ -1,4 +1,4 @@
-// Raylib + box2d Compatibility
+// Drawing
 void DrawBody(b2BodyId id, Color color) {
     // Compute AABB
     b2ShapeId shapes[10];
@@ -35,12 +35,18 @@ void DrawBody(b2BodyId id, Color color) {
             b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
             b2Vec2 edge = b2Add(center, b2MulSV(circle.radius, { rotation.c,rotation.s }));
             //DrawCircleV({ center.x, center.y }, circle.radius, (b2Body_IsAwake(id) ? RED : GRAY)); // Draw circle
-            DrawCircleV({ center.x, center.y }, circle.radius, color); // Draw circle
-            DrawLineV({ center.x, center.y }, { edge.x, edge.y }, ColorBrightness(color,-0.5f));
+            DrawCircleV({ center.x, center.y }, circle.radius, ColorBrightness(color, -0.2f)); // Draw circle
+            DrawCircleV({ center.x, center.y }, circle.radius - 1, color); // Draw circle
+            DrawLineEx({ center.x, center.y }, { edge.x, edge.y }, 1.0f, ColorBrightness(color, -0.2f));
             break;
         }
         }
     }
+}
+void DrawJoint(b2JointId joint) {
+    b2Vec2 posA = b2Body_GetPosition(b2Joint_GetBodyA(joint));
+    b2Vec2 posB = b2Body_GetPosition(b2Joint_GetBodyB(joint));
+    DrawLine(posA.x, posA.y, posB.x, posB.y, BLACK);
 }
 
 // Extras
