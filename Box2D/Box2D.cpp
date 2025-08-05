@@ -37,6 +37,9 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Box2D");
     SetTargetFPS(60);
 
+    // Debug Setup
+    bool show_controls = true;
+
     // Viewport Definition
     Camera2D viewport;
     viewport.offset = { 400.0f, 400.0f };
@@ -66,6 +69,9 @@ int main() {
         if (IsKeyPressed(KEY_R)) {
 			ResetScene(worldId, bodies); // Reset scene
         }
+        if (IsKeyPressed(KEY_Q)) {
+            show_controls = !show_controls;
+        }
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
@@ -90,13 +96,13 @@ int main() {
             b2Vec2 mVec = { mPos.x,mPos.y };
             DragBody(Selection.bodyId, mVec);
         }
-
-        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
             Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
             b2Vec2 mVec = { mPos.x,mPos.y };
             RayBody newBody = { CreateBall(worldId, mVec, 10.0f, true), RandomColor() };
             bodies.push_back(newBody);
         }
+
         // Simulate
         float deltaTime = GetFrameTime();
         b2World_Step(worldId, deltaTime, subStepCount);
@@ -104,7 +110,6 @@ int main() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         BeginMode2D(viewport);
-
         DrawLine(0, 3, 0, -3, GRAY);
         DrawLine(3, 0, -3, 0, GRAY);
 
@@ -117,9 +122,17 @@ int main() {
                 DrawJoint(jointArray[i]);
             }
         }
-
         
         EndMode2D();
+        if (show_controls) {
+            DrawText("Left Click - Drag Body", 5, 10, 20, BLACK);
+            DrawText("Right Click - Create Body", 5, 30, 20, BLACK);
+            DrawText("R - Reset Scene", 5, 50, 20, BLACK);
+            DrawText("Q - Toggle Controls", 5, 70, 20, BLACK);
+        }
+        else {
+            DrawText("Press Q to open controls", 5, 10, 10, BLACK);
+        }
         EndDrawing();
     }
 
