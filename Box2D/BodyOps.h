@@ -32,7 +32,7 @@ b2BodyId CreateBall(b2WorldId worldId, b2Vec2 center, float radius, bool dynamic
 }
 
 // Constraints & Joints
-void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor, float length) {
+void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
     b2DistanceJointDef jointDef = b2DefaultDistanceJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
     jointDef.base.bodyIdB = bodyB; // Set second body
