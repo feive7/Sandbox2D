@@ -26,5 +26,8 @@
     <ClInclude Include="BodyOps.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="RLGUI.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
