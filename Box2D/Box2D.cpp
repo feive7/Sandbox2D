@@ -3,6 +3,7 @@
 #include <box2d/box2d.h>
 #include <raylib.h>
 #include <rlgl.h>
+#include <RLGUI.h>
 #include <raybox.h>
 #include <BodyOps.h>
 
@@ -30,21 +31,53 @@ struct {
         Selection.numOfBodyIds = 0;
     }
 } Selection;
+struct {
+    bool open;
+    GUI gui;
+} SpawnMenu;
 
 void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
     for (RayBody& body : bodies) {
         b2DestroyBody(body.id); // Destroy all bodies
     }
-    bodies.clear(); // Clear boxes
+    bodies.clear(); // Clear bodies
 
-    bodies.push_back({ CreateBox(worldId, {-120.0f,0.0f}, {10.0f,110.0f}, false), GREEN });
-    bodies.push_back({ CreateBox(worldId, {120.0f,0.0f}, {10.0f,110.0f}, false), GREEN });
-    bodies.push_back({ CreateBox(worldId, {0.0f,-120.0f}, {110.0f,10.0f}, false), GREEN });
-    bodies.push_back({ CreateBox(worldId, {0.0f,120.0f}, {110.0f,10.0f}, false), GREEN});
-
-    bodies.push_back({ CreateBall(worldId, {-30.0f,0.0f}, 10.0f, true), RED });
-    bodies.push_back({ CreateBall(worldId, {30.0f,0.0f}, 10.0f, true), BLUE });
-    bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), PURPLE });
+    bodies.push_back({ CreateHollowBox(worldId, {0.0f,0.0f}, {130.0f,130.0f}, false),BLUE });
+}
+void InitSpawnMenu() {
+    SpawnMenu.gui.addButton({
+        .x = 10,
+        .y = 10,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .fontColor = DARKGRAY,
+        .text = "Spawn Ball",
+        .id = 0,
+        });
+    SpawnMenu.gui.addButton({
+        .x = 145,
+        .y = 10,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .fontColor = DARKGRAY,
+        .text = "Spawn Box",
+        .id = 1,
+        });
+    SpawnMenu.gui.addButton({
+        .x = 280,
+        .y = 10,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .fontColor = DARKGRAY,
+        .text = "Spawn Cup",
+        .id = 2,
+        });
 }
 int main() {
     // Window Definition
@@ -71,6 +104,9 @@ int main() {
     std::vector<RayBody> bodies;
     ResetScene(worldId, bodies); // Reset scene
 
+    // Spawn menu setup
+    InitSpawnMenu();
+
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
 
@@ -82,8 +118,13 @@ int main() {
         if (IsKeyPressed(KEY_R)) {
 			ResetScene(worldId, bodies); // Reset scene
         }
-        if (IsKeyPressed(KEY_Q)) {
-
+        if (IsKeyDown(KEY_Q)) {
+            // Open spawn menu
+			SpawnMenu.open = true;
+        }
+        else {
+            // Close spawn menu
+            SpawnMenu.open = false;
         }
         if (IsKeyPressed(KEY_M)) {
             Selection.mode++;
@@ -93,61 +134,83 @@ int main() {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
 
-        if (Selection.mode == MODE_SELECT) {
+        if (SpawnMenu.open) {
+            Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                // Check if a body is under the mouse
-                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-                b2Vec2 mVec = { mPos.x,mPos.y };
-                for (RayBody body : bodies) {
-                    if (BodyContains(body.id, mVec)) {
-                        Selection.bodyIds[0] = body.id;
-                        Selection.localPoint = b2Body_GetLocalPoint(body.id, mVec);
-                        Selection.numOfBodyIds = 1;
-                        break;
-                    }
+                int buttonId = SpawnMenu.gui.getHovering(mPos); // Get ID of button clicked
+                /*switch (buttonId) {
+                    case 0: bodies.push_back({ CreateBall(worldId, {0.0f,0.0f}, 10.0f, true), RED }); break;
+                    case 1: bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RED }); break;
+                    case 2: bodies.push_back({ CreateCup(worldId, {0.0f,0.0f}, {30.0f,30.0f}, true), RED }); break;
+                }*/
+                if (buttonId == 0) {
+                    bodies.push_back({ CreateBall(worldId, {0.0f,0.0f}, 10.0f, true), RandomColor()});
                 }
-            }
-            else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                Selection.numOfBodyIds = 0;
-            }
-            if (Selection.numOfBodyIds) {
-                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-                b2Vec2 mVec = { mPos.x,mPos.y };
-                BodyUnfreeze(Selection.bodyIds[0]); // Freeze the body
-                DragBody(Selection.bodyIds[0], mVec);
-
-                if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-                    BodyFreeze(Selection.bodyIds[0]); // Freeze the body
-                    Selection.clear(); // Deselect
+                if (buttonId == 1) {
+                    bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RandomColor() });
                 }
-                if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.bodyIds[0])) {
-                    // Delete code
+                if (buttonId == 2) {
+                    bodies.push_back({ CreateCup(worldId, {0.0f,0.0f}, {20.0f,20.0f}, true), RandomColor() });
                 }
             }
         }
-        else if (Selection.mode == MODE_JOINT) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                // Check if a body is under the mouse
-                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-                b2Vec2 mVec = { mPos.x,mPos.y };
-                for (RayBody body : bodies) {
-                    if (BodyContains(body.id, mVec)) {
-                        // Add body to selection
-                        Selection.bodyIds[Selection.numOfBodyIds] = body.id;
-                        Selection.numOfBodyIds++;
-                        break;
+        else {
+            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+            b2Vec2 mVec = { mPos.x,mPos.y };
+            if (Selection.mode == MODE_SELECT) {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    // Check if a body is under the mouse
+                    for (RayBody body : bodies) {
+                        if (BodyContains(body.id, mVec)) {
+                            Selection.bodyIds[0] = body.id;
+                            Selection.localPoint = b2Body_GetLocalPoint(body.id, mVec);
+                            Selection.numOfBodyIds = 1;
+                            break;
+                        }
+                    }
+                }
+                else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                    b2Body_SetMotionLocks(Selection.bodyIds[0], { false, false, false });
+                    Selection.numOfBodyIds = 0;
+                }
+                if (Selection.numOfBodyIds) {
+                    BodyUnfreeze(Selection.bodyIds[0]); // Freeze the body
+                    b2Body_SetMotionLocks(Selection.bodyIds[0], {false, false, true}); // Unfreeze the body
+                    DragBody(Selection.bodyIds[0], mVec, Selection.localPoint);
+
+                    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+                        BodyFreeze(Selection.bodyIds[0]); // Freeze the body
+                        Selection.clear(); // Deselect
+                    }
+                    if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.bodyIds[0])) {
+                        // Delete code
                     }
                 }
             }
-            if (Selection.numOfBodyIds == 2) {
-                if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
-                    HingeBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
-                    printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
+            else if (Selection.mode == MODE_JOINT) {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    // Check if a body is under the mouse
+                    Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+                    b2Vec2 mVec = { mPos.x,mPos.y };
+                    for (RayBody body : bodies) {
+                        if (BodyContains(body.id, mVec)) {
+                            // Add body to selection
+                            Selection.bodyIds[Selection.numOfBodyIds] = body.id;
+                            Selection.numOfBodyIds++;
+                            break;
+                        }
+                    }
                 }
-                else {
-                    printf("Ignoring self joint\n");
+                if (Selection.numOfBodyIds == 2) {
+                    if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
+                        HingeBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
+                        printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
+                    }
+                    else {
+                        printf("Ignoring self joint\n");
+                    }
+                    Selection.clear(); // Clear selection regardless
                 }
-                Selection.clear(); // Clear selection regardless
             }
         }
 
@@ -172,6 +235,10 @@ int main() {
         //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
         
         EndMode2D();
+        if (SpawnMenu.open) {
+            SpawnMenu.gui.draw();
+        }
+
         EndDrawing();
     }
 
