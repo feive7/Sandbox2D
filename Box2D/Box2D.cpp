@@ -221,8 +221,8 @@ int main() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         BeginMode2D(viewport);
-        DrawLine(0, 3, 0, -3, GRAY);
-        DrawLine(3, 0, -3, 0, GRAY);
+        /*DrawLine(0, 3, 0, -3, GRAY);
+        DrawLine(3, 0, -3, 0, GRAY);*/
 
         for (RayBody& body : bodies) {
             body.draw();
