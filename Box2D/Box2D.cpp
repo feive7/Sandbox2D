@@ -29,6 +29,9 @@ void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
     bodies.push_back({ CreateBox(worldId, {120.0f,0.0f}, {10.0f,110.0f}, false), GREEN });
     bodies.push_back({ CreateBox(worldId, {0.0f,-120.0f}, {110.0f,10.0f}, false), GREEN });
     bodies.push_back({ CreateBox(worldId, {0.0f,120.0f}, {110.0f,10.0f}, false), GREEN});
+
+    bodies.push_back({ CreateBall(worldId, {-30.0f,0.0f}, 10.0f, true), RED });
+    bodies.push_back({ CreateBall(worldId, {30.0f,0.0f}, 10.0f, true), BLUE });
 }
 int main() {
     // Window Definition
@@ -75,7 +78,8 @@ int main() {
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
-		Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), viewport);
+		Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), viewport); 
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
             b2Vec2 mVec = { mPos.x,mPos.y };
@@ -95,7 +99,21 @@ int main() {
             Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
             b2Vec2 mVec = { mPos.x,mPos.y };
             DragBody(Selection.bodyId, mVec);
+            if (IsKeyPressed(KEY_F)) {
+                if (b2Body_GetType(Selection.bodyId) == b2_dynamicBody) {
+                    b2Body_SetType(Selection.bodyId, b2_staticBody);
+                }
+                else {
+                    b2Body_SetType(Selection.bodyId, b2_dynamicBody);
+                }
+            }
+            if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.bodyId)) {
+                b2DestroyBody(Selection.bodyId);
+                Selection.active = false;
+
+            }
         }
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
             Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
             b2Vec2 mVec = { mPos.x,mPos.y };

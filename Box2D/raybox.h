@@ -25,7 +25,8 @@ void DrawBody(b2BodyId id, Color color) {
             b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
 
             //DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, (b2Body_IsAwake(id) ? RED : GRAY)); // Draw ground
-            DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
+            DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, ColorBrightness(color, -0.2f)); // Draw ground
+            DrawRectanglePro({ position.x + 1, position.y + 1, 2 * extents.x - 2, 2 * extents.y - 2}, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
             break;
         }
         case b2_circleShape: {
