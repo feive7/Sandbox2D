@@ -219,7 +219,7 @@ int main() {
                 }
                 if (Selection.numOfBodyIds == 2) {
                     if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
-                        HingeBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
+                        //HingeBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
                         printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
                     }
                     else {
