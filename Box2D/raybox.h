@@ -7,10 +7,15 @@ void DrawBody(b2BodyId id, Color color) {
     for (int i = 0; i < b2Body_GetShapeCount(id); i++) {
         b2ShapeId shape = shapes[i]; // Shape
         int shapeType = b2Shape_GetType(shape);
+        b2Transform bodyTransform = b2Body_GetTransform(id);
+        b2Vec2 bodyCenter = b2Body_GetPosition(id); // Get position of dynamic body
+        b2Rot bodyRotation = b2Body_GetRotation(id); // Get rotation of dynamic body
 
         switch (shapeType) {
         case b2_polygonShape: {
             b2Polygon poly = b2Shape_GetPolygon(shape); // Polygon
+            b2Vec2 centroid = poly.centroid;
+			b2Vec2 rotOffset = b2RotateVector(bodyRotation, centroid); // Rotate centroid by body rotation
 
             // Get Transformation
             b2Transform transformation = b2Body_GetTransform(id);
@@ -21,25 +26,20 @@ void DrawBody(b2BodyId id, Color color) {
 
             b2AABB aabb = b2ComputePolygonAABB(&poly, unrotated);
             b2Vec2 extents = b2AABB_Extents(aabb);
-            b2Vec2 position = b2Body_GetPosition(id); // Get position of dynamic body
-            b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
 
             //DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, (b2Body_IsAwake(id) ? RED : GRAY)); // Draw ground
-            DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, ColorBrightness(color, -0.2f)); // Draw ground
-			DrawRectanglePro({ position.x, position.y, 2 * extents.x - 2, 2 * extents.y - 2 }, { extents.x - 1, extents.y - 1 }, b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
-			DrawCircle(position.x, position.y, 2, ColorBrightness(color, -0.2f)); // Draw center circle
+            DrawRectanglePro({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y , 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(bodyRotation)* RAD2DEG, ColorBrightness(color, -0.2f)); // Draw ground
+			DrawRectanglePro({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y , 2 * extents.x - 2, 2 * extents.y - 2 }, { extents.x - 1, extents.y - 1 }, b2Rot_GetAngle(bodyRotation) * RAD2DEG, color); // Draw ground
+            DrawCircleV({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y }, 2, ColorBrightness(color, -0.2f)); // Draw center circle
             break;
         }
         case b2_circleShape: {
             b2Circle circle = b2Shape_GetCircle(shape);
-            b2Transform transformation = b2Body_GetTransform(id);
-            b2Vec2 center = b2Body_GetPosition(id); // Get position of dynamic body
-            b2Rot rotation = b2Body_GetRotation(id); // Get rotation of dynamic body
-            b2Vec2 edge = b2Add(center, b2MulSV(circle.radius, { rotation.c,rotation.s }));
+            b2Vec2 edge = b2Add(bodyTransform.p, b2MulSV(circle.radius, { bodyTransform.q.c,bodyTransform.q.s }));
             //DrawCircleV({ center.x, center.y }, circle.radius, (b2Body_IsAwake(id) ? RED : GRAY)); // Draw circle
-            DrawCircleV({ center.x, center.y }, circle.radius, ColorBrightness(color, -0.2f)); // Draw circle
-            DrawCircleV({ center.x, center.y }, circle.radius - 1, color); // Draw circle
-            DrawLineEx({ center.x, center.y }, { edge.x, edge.y }, 1.0f, ColorBrightness(color, -0.2f));
+            DrawCircleV({ bodyCenter.x, bodyCenter.y }, circle.radius, ColorBrightness(color, -0.2f)); // Draw circle border
+            DrawCircleV({ bodyCenter.x, bodyCenter.y }, circle.radius - 1, color); // Draw inner circle
+            DrawLineEx({ bodyCenter.x, bodyCenter.y }, { edge.x, edge.y }, 1.0f, ColorBrightness(color, -0.2f)); // Draw line from center to edge to show rotation
             break;
         }
         }
