@@ -26,7 +26,8 @@ void DrawBody(b2BodyId id, Color color) {
 
             //DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, (b2Body_IsAwake(id) ? RED : GRAY)); // Draw ground
             DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, ColorBrightness(color, -0.2f)); // Draw ground
-            DrawRectanglePro({ position.x + 1, position.y + 1, 2 * extents.x - 2, 2 * extents.y - 2}, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
+			DrawRectanglePro({ position.x, position.y, 2 * extents.x - 2, 2 * extents.y - 2 }, { extents.x - 1, extents.y - 1 }, b2Rot_GetAngle(rotation) * RAD2DEG, color); // Draw ground
+			DrawCircle(position.x, position.y, 2, ColorBrightness(color, -0.2f)); // Draw center circle
             break;
         }
         case b2_circleShape: {
@@ -48,6 +49,10 @@ void DrawJoint(b2JointId joint) {
     b2Vec2 posA = b2Body_GetPosition(b2Joint_GetBodyA(joint));
     b2Vec2 posB = b2Body_GetPosition(b2Joint_GetBodyB(joint));
     DrawLine(posA.x, posA.y, posB.x, posB.y, BLACK);
+}
+void DrawAABB(b2AABB aabb) {
+    b2Vec2 extents = b2MulSV(2.0f,b2AABB_Extents(aabb));
+    DrawRectangleLines(aabb.lowerBound.x, aabb.lowerBound.y, extents.x, extents.y, LIME);
 }
 
 // Extras

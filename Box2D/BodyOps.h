@@ -67,3 +67,43 @@ bool AABBContains(b2AABB aabb, b2Vec2 vec2) {
         return true;
     return false;
 }
+bool BodyContains(b2BodyId bodyId, b2Vec2 vec2) {
+    b2ShapeId shapeArray[10];
+    b2Body_GetShapes(bodyId, shapeArray, 10);
+    for (int i = 0; i < b2Body_GetShapeCount(bodyId); i++) {
+        if (b2Shape_TestPoint(shapeArray[i], vec2)) {
+            return true;
+        }
+    }
+    return false;
+}
+void BodyFreeze(b2BodyId bodyId) {
+	b2Body_SetType(bodyId, b2_staticBody); // Set body type to static
+}
+void BodyUnfreeze(b2BodyId bodyId) {
+    b2Body_SetType(bodyId, b2_dynamicBody); // Set body type to dynamic
+}
+b2AABB b2Body_ComputeAABBEx(b2BodyId bodyId) {
+    b2ShapeId shapes[10];
+    b2Body_GetShapes(bodyId, shapes, 10); // Get shapes of the body
+    b2AABB aabb = { { FLT_MAX, FLT_MAX }, { -FLT_MAX, -FLT_MAX } }; // Initialize AABB
+	b2Transform transform = b2Body_GetTransform(bodyId); // Get body transform
+	transform.q = b2Rot_identity; // Set rotation to identity for AABB computation
+    for (int i = 0; i < b2Body_GetShapeCount(bodyId); i++) {
+        b2ShapeId shape = shapes[i]; // Get shape
+        int shapeType = b2Shape_GetType(shape); // Get shape type
+        switch (shapeType) {
+        case b2_polygonShape: {
+            b2Polygon poly = b2Shape_GetPolygon(shape); // Get polygon
+            aabb = b2AABB_Union(aabb, b2ComputePolygonAABB(&poly, transform)); // Combine AABBs
+            break;
+        }
+        case b2_circleShape: {
+            b2Circle circle = b2Shape_GetCircle(shape); // Get circle
+            aabb = b2AABB_Union(aabb, b2ComputeCircleAABB(&circle, transform)); // Combine AABBs
+            break;
+        }
+        }
+    }
+    return aabb; // Return the computed AABB
+}

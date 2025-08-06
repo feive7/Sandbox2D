@@ -6,6 +6,11 @@
 #include <raybox.h>
 #include <BodyOps.h>
 
+enum Selection_mode {
+    MODE_SELECT,
+    MODE_JOINT,
+    MODE_COUNT,
+};
 struct RayBody {
     b2BodyId id;
     Color color;
@@ -15,8 +20,15 @@ struct RayBody {
 };
 
 struct {
+    int mode = MODE_SELECT;
     bool active;
-    b2BodyId bodyId;
+    b2BodyId bodyIds[10];
+    int numOfBodyIds;
+    b2Vec2 localPoint;
+    void clear() {
+        Selection.numOfBodyIds = {};
+        Selection.numOfBodyIds = 0;
+    }
 } Selection;
 
 void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
@@ -32,6 +44,7 @@ void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
 
     bodies.push_back({ CreateBall(worldId, {-30.0f,0.0f}, 10.0f, true), RED });
     bodies.push_back({ CreateBall(worldId, {30.0f,0.0f}, 10.0f, true), BLUE });
+    bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), PURPLE });
 }
 int main() {
     // Window Definition
@@ -75,50 +88,70 @@ int main() {
         if (IsKeyPressed(KEY_Q)) {
             show_controls = !show_controls;
         }
+        if (IsKeyPressed(KEY_M)) {
+            Selection.mode++;
+            Selection.mode %= MODE_COUNT;
+        }
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
-		Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), viewport); 
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-            b2Vec2 mVec = { mPos.x,mPos.y };
-            for (RayBody body : bodies) {
-                b2AABB test = b2Body_ComputeAABB(body.id);
-                if (AABBContains(test, mVec)) {
-                    Selection.active = true;
-                    Selection.bodyId = body.id;
-                    break;
+        if (Selection.mode == MODE_SELECT) {
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                // Check if a body is under the mouse
+                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+                b2Vec2 mVec = { mPos.x,mPos.y };
+                for (RayBody body : bodies) {
+                    if (BodyContains(body.id, mVec)) {
+                        Selection.bodyIds[0] = body.id;
+                        Selection.localPoint = b2Body_GetLocalPoint(body.id, mVec);
+                        Selection.numOfBodyIds = 1;
+                        break;
+                    }
+                }
+            }
+            else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                Selection.numOfBodyIds = 0;
+            }
+            if (Selection.numOfBodyIds) {
+                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+                b2Vec2 mVec = { mPos.x,mPos.y };
+                BodyUnfreeze(Selection.bodyIds[0]); // Freeze the body
+                DragBody(Selection.bodyIds[0], mVec);
+
+                if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+                    BodyFreeze(Selection.bodyIds[0]); // Freeze the body
+                    Selection.clear(); // Deselect
+                }
+                if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.bodyIds[0])) {
+                    // Delete code
                 }
             }
         }
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-            Selection.active = false;
-        }
-        if (Selection.active) {
-            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-            b2Vec2 mVec = { mPos.x,mPos.y };
-            DragBody(Selection.bodyId, mVec);
-            if (IsKeyPressed(KEY_F)) {
-                if (b2Body_GetType(Selection.bodyId) == b2_dynamicBody) {
-                    b2Body_SetType(Selection.bodyId, b2_staticBody);
+        else if (Selection.mode == MODE_JOINT) {
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                // Check if a body is under the mouse
+                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+                b2Vec2 mVec = { mPos.x,mPos.y };
+                for (RayBody body : bodies) {
+                    if (BodyContains(body.id, mVec)) {
+                        // Add body to selection
+                        Selection.bodyIds[Selection.numOfBodyIds] = body.id;
+                        Selection.numOfBodyIds++;
+                        break;
+                    }
+                }
+            }
+            if (Selection.numOfBodyIds == 2) {
+                if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
+                    HingeBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
+                    printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
                 }
                 else {
-                    b2Body_SetType(Selection.bodyId, b2_dynamicBody);
+                    printf("Ignoring self joint\n");
                 }
+                Selection.clear(); // Clear selection regardless
             }
-            if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.bodyId)) {
-                b2DestroyBody(Selection.bodyId);
-                Selection.active = false;
-
-            }
-        }
-
-        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-            b2Vec2 mVec = { mPos.x,mPos.y };
-            RayBody newBody = { CreateBall(worldId, mVec, 10.0f, true), RandomColor() };
-            bodies.push_back(newBody);
         }
 
         // Simulate
@@ -133,13 +166,13 @@ int main() {
 
         for (RayBody& body : bodies) {
             body.draw();
-
             b2JointId jointArray[3];
             b2Body_GetJoints(body.id, jointArray, 3);
             for (int i = 0; i < b2Body_GetJointCount(body.id); i++) {
                 DrawJoint(jointArray[i]);
             }
         }
+        //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
         
         EndMode2D();
         if (show_controls) {
@@ -147,6 +180,7 @@ int main() {
             DrawText("Right Click - Create Body", 5, 30, 20, BLACK);
             DrawText("R - Reset Scene", 5, 50, 20, BLACK);
             DrawText("Q - Toggle Controls", 5, 70, 20, BLACK);
+            DrawText(TextFormat("Mode: %i", Selection.mode), 5, 90, 20, BLACK);
         }
         else {
             DrawText("Press Q to open controls", 5, 10, 10, BLACK);
