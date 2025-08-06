@@ -52,7 +52,7 @@ void InitSpawnMenu() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
-        .fontColor = DARKGRAY,
+        .fontColor = WHITE,
         .text = "Spawn Ball",
         .id = 0,
         });
@@ -63,7 +63,7 @@ void InitSpawnMenu() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
-        .fontColor = DARKGRAY,
+        .fontColor = WHITE,
         .text = "Spawn Box",
         .id = 1,
         });
@@ -74,10 +74,22 @@ void InitSpawnMenu() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
-        .fontColor = DARKGRAY,
+        .fontColor = WHITE,
         .text = "Spawn Cup",
         .id = 2,
         });
+    SpawnMenu.gui.addLabel({
+        .x = 10,
+        .y = 70,
+        .fontSize = 20,
+        .fontColor = BLACK,
+        .text = "Q: Open Spawn Menu\n"
+                 "Left Click: Drag Body\n"
+				 "Right Click while dragging: Freeze Body\n"
+                 "R: Reset Scene\n"
+                 //"M: Change Selection Mode\n"
+                 "Scroll Wheel: Zoom Viewport\n"
+		});
 }
 int main() {
     // Window Definition
@@ -107,6 +119,9 @@ int main() {
     // Spawn menu setup
     InitSpawnMenu();
 
+    // One time control display
+    bool OTCD = true;
+
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
 
@@ -120,6 +135,7 @@ int main() {
         }
         if (IsKeyDown(KEY_Q)) {
             // Open spawn menu
+            OTCD = false;
 			SpawnMenu.open = true;
         }
         else {
@@ -235,6 +251,11 @@ int main() {
         //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
         
         EndMode2D();
+        if (OTCD) {
+            const char* text = "Hold Q to open spawn menu";
+            int measure = MeasureText(text, 40);
+            DrawText(text, (screenWidth - measure) / 2, (screenHeight - 40) / 2, 40, {200,200,200,255});
+        }
         if (SpawnMenu.open) {
             SpawnMenu.gui.draw();
         }
