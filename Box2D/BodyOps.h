@@ -142,6 +142,14 @@ void DragBody(b2BodyId bodyId, b2Vec2 point, float force = 100.0f) {
 
     b2Body_SetLinearVelocity(bodyId, final);
 }
+void DragBody(b2BodyId bodyId, b2Vec2 point, b2Vec2 pointOnBody, float force = 100.0f) {
+    b2Vec2 bodyPos = b2Body_GetWorldPoint(bodyId,pointOnBody);
+
+    b2Vec2 vel = { point.x - bodyPos.x, point.y - bodyPos.y };
+    b2Vec2 final = b2MulSV(force, vel);
+
+    b2Body_SetLinearVelocity(bodyId, final);
+}
 bool AABBContains(b2AABB aabb, b2Vec2 vec2) {
     if (aabb.lowerBound.x < vec2.x && aabb.lowerBound.y < vec2.y && aabb.upperBound.x > vec2.x && aabb.upperBound.y > vec2.y)
         return true;
