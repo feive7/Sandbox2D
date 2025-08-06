@@ -30,6 +30,70 @@ b2BodyId CreateBall(b2WorldId worldId, b2Vec2 center, float radius, bool dynamic
 
     return ballBodyId; // Return the id
 }
+b2BodyId CreateCup(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool dynamic) {
+    // Create body
+    b2BodyDef cupBodyDef = b2DefaultBodyDef();
+    cupBodyDef.position = center;
+    if (dynamic) cupBodyDef.type = b2_dynamicBody;
+    b2BodyId cupBodyId = b2CreateBody(worldId, &cupBodyDef);
+
+    // Create bottom wall shape
+    b2Polygon bottom = b2MakeOffsetBox(extent.x + 4.0f, 2.0f, { 0.0f,-extent.y - 2.0f }, b2Rot_identity);
+    b2ShapeDef bottomShape = b2DefaultShapeDef();
+    bottomShape.density = 1.0f;
+
+    // Create left side shape
+    b2Polygon leftside = b2MakeOffsetBox(2.0f, extent.y, { -extent.x-2.0f,0.0f }, b2Rot_identity);
+    b2ShapeDef leftsideShape = b2DefaultShapeDef();
+    leftsideShape.density = 1.0f;
+
+    // Create left side shape
+    b2Polygon rightside = b2MakeOffsetBox(2.0f, extent.y, { extent.x+2.0f,0.0f }, b2Rot_identity);
+    b2ShapeDef rightsideShape = b2DefaultShapeDef();
+    rightsideShape.density = 1.0f;
+
+    // Bind it all together
+    b2CreatePolygonShape(cupBodyId, &bottomShape, &bottom);
+    b2CreatePolygonShape(cupBodyId, &leftsideShape, &leftside);
+    b2CreatePolygonShape(cupBodyId, &rightsideShape, &rightside);
+
+    return cupBodyId;
+}
+b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool dynamic) {
+    // Create body
+    b2BodyDef hollowBoxBodyDef = b2DefaultBodyDef();
+    hollowBoxBodyDef.position = center;
+    if (dynamic) hollowBoxBodyDef.type = b2_dynamicBody;
+    b2BodyId hollowBoxBodyId = b2CreateBody(worldId, &hollowBoxBodyDef);
+
+    // Create bottom wall shape
+    b2Polygon bottom = b2MakeOffsetBox(extent.x + 4.0f, 2.0f, { 0.0f,-extent.y - 2.0f }, b2Rot_identity);
+    b2ShapeDef bottomShape = b2DefaultShapeDef();
+    bottomShape.density = 1.0f;
+
+    // Create top wall shape
+    b2Polygon top = b2MakeOffsetBox(extent.x + 4.0f, 2.0f, { 0.0f,extent.y + 2.0f }, b2Rot_identity);
+    b2ShapeDef topShape = b2DefaultShapeDef();
+    topShape.density = 1.0f;
+
+    // Create left side shape
+    b2Polygon leftside = b2MakeOffsetBox(2.0f, extent.y, { -extent.x - 2.0f,0.0f }, b2Rot_identity);
+    b2ShapeDef leftsideShape = b2DefaultShapeDef();
+    leftsideShape.density = 1.0f;
+
+    // Create left side shape
+    b2Polygon rightside = b2MakeOffsetBox(2.0f, extent.y, { extent.x + 2.0f,0.0f }, b2Rot_identity);
+    b2ShapeDef rightsideShape = b2DefaultShapeDef();
+    rightsideShape.density = 1.0f;
+
+    // Bind it all together
+    b2CreatePolygonShape(hollowBoxBodyId, &bottomShape, &bottom);
+    b2CreatePolygonShape(hollowBoxBodyId, &topShape, &top);
+    b2CreatePolygonShape(hollowBoxBodyId, &leftsideShape, &leftside);
+    b2CreatePolygonShape(hollowBoxBodyId, &rightsideShape, &rightside);
+
+    return hollowBoxBodyId;
+}
 
 // Constraints & Joints
 void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
