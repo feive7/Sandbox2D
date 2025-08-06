@@ -53,9 +53,6 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Box2D");
     SetTargetFPS(60);
 
-    // Debug Setup
-    bool show_controls = true;
-
     // Viewport Definition
     Camera2D viewport;
     viewport.offset = { 400.0f, 400.0f };
@@ -86,7 +83,7 @@ int main() {
 			ResetScene(worldId, bodies); // Reset scene
         }
         if (IsKeyPressed(KEY_Q)) {
-            show_controls = !show_controls;
+
         }
         if (IsKeyPressed(KEY_M)) {
             Selection.mode++;
@@ -175,16 +172,6 @@ int main() {
         //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
         
         EndMode2D();
-        if (show_controls) {
-            DrawText("Left Click - Drag Body", 5, 10, 20, BLACK);
-            DrawText("Right Click - Create Body", 5, 30, 20, BLACK);
-            DrawText("R - Reset Scene", 5, 50, 20, BLACK);
-            DrawText("Q - Toggle Controls", 5, 70, 20, BLACK);
-            DrawText(TextFormat("Mode: %i", Selection.mode), 5, 90, 20, BLACK);
-        }
-        else {
-            DrawText("Press Q to open controls", 5, 10, 10, BLACK);
-        }
         EndDrawing();
     }
 
