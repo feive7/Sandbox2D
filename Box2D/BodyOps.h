@@ -43,14 +43,30 @@ void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB) {
     HingeBodies(id, bodyA, bodyB, b2Distance(b2Body_GetPosition(bodyA), b2Body_GetPosition(bodyB)));
 }
 void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
-    b2PrismaticJointDef jointDef = b2DefaultPrismaticJointDef(); // Create joint definition
+    b2WeldJointDef jointDef = b2DefaultWeldJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
     jointDef.base.bodyIdB = bodyB; // Set second body
     jointDef.base.localFrameA.p = anchor; // Set first local frame
     jointDef.base.localFrameB.p = anchor; // Set second local frame
-    jointDef.maxMotorForce = 100.0f; // Set maximum motor force
-    jointDef.hertz = 10.0f; // Set hertz
-    b2CreatePrismaticJoint(id, &jointDef); // Create the joint
+    b2CreateWeldJoint(id, &jointDef); // Create the joint
+}
+void RevoluteJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
+    b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef(); // Create joint definition
+    jointDef.base.bodyIdA = bodyA; // Set first body
+    jointDef.base.bodyIdB = bodyB; // Set second body
+    jointDef.base.localFrameA.p = anchor; // Set first local frame
+    jointDef.base.localFrameB.p = anchor; // Set second local frame
+    b2CreateRevoluteJoint(id, &jointDef); // Create the joint
+}
+void MouseJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
+    b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef(); // Create joint definition
+    jointDef.base.bodyIdA = bodyA; // Set first body
+    jointDef.base.bodyIdB = bodyB; // Set second body
+    jointDef.base.localFrameA.p = anchor; // Set first local frame
+    jointDef.base.localFrameB.p = anchor; // Set second local frame
+    jointDef.enableMotor = true; // Enable motor for dragging
+    jointDef.maxMotorTorque = 1000.0f; // Set max motor torque
+    b2CreateRevoluteJoint(id, &jointDef); // Create the joint
 }
 
 // Misc
