@@ -129,7 +129,7 @@ int main() {
     InitGUIs();
 
     // One time control display
-    bool OTCD = false;
+    bool OTCD = true;
 
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
@@ -151,6 +151,7 @@ int main() {
         }
         spawnMenu.active = IsKeyDown(KEY_Q);
 		controlMenu.active = IsKeyDown(KEY_C);
+
         if (IsKeyPressed(KEY_M)) {
             Selection.mode++;
             Selection.mode %= MODE_COUNT;
@@ -265,16 +266,19 @@ int main() {
         
         EndMode2D();
         if (OTCD) {
-            const char* text = "Hold Q to open spawn menu";
+            const char* text = "Hold C to open control menu";
             int measure = MeasureText(text, 40);
             DrawText(text, (screenWidth - measure) / 2, (screenHeight - 40) / 2, 40, {200,200,200,255});
         }
         spawnMenu.draw();
+        controlMenu.draw();
         if (spawnMenu.active) {
             DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
             DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
         }
-        controlMenu.draw();
+        if (controlMenu.active) {
+            OTCD = false;
+        }
 
         EndDrawing();
     }
