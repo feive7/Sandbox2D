@@ -149,12 +149,13 @@ void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2
     jointDef.base.bodyIdA = bodyA; // Set first body
     jointDef.base.bodyIdB = bodyB; // Set second body
     jointDef.base.localFrameA.p = anchorA; // Set first local frame
+    jointDef.base.localFrameA.q = b2Body_GetRotation(bodyB); // Set first local frame
     jointDef.base.localFrameB.p = anchorB; // Set second local frame
+    jointDef.base.localFrameB.q = b2Body_GetRotation(bodyA); // Set first local frame
     b2CreateWeldJoint(id, &jointDef); // Create the joint
 
-    // Wake both bodies
-    b2Body_SetAwake(bodyA, true);
-    b2Body_SetAwake(bodyB, true);
+    // Unfreeze body that is being welded
+    b2Body_SetType(bodyA, b2_dynamicBody);
 }
 void WheelBodies(b2WorldId id, b2BodyId bodyBody, b2BodyId wheelBody, b2Vec2 anchor) {
     b2WheelJointDef jointDef = b2DefaultWheelJointDef(); // Create joint definition
