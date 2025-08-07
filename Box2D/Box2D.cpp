@@ -385,6 +385,9 @@ int main() {
         }
         spawnMenu.draw();
         toolMenu.draw();
+        if (toolMenu.active) {
+            OTCD = false;
+		}
         if (spawnMenu.active) {
             DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
             DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
