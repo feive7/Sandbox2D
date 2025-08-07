@@ -97,6 +97,43 @@ b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool d
 
 // Constraints & Joints
 void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, float length, bool collideConnected, float dampingRatio, bool enableLimit, bool enableMotor, bool enableSpring, float hertz, b2Vec2 localAnchorA, b2Vec2 localAnchorB, float maxLength, float maxMotorForce, float minLength, float motorSpeed) {
+	b2DistanceJointDef jointDef = b2DefaultDistanceJointDef(); // Create joint definition
+	jointDef.base.bodyIdA = bodyA; // Set first body
+	jointDef.base.bodyIdB = bodyB; // Set second body
+	jointDef.length = length; // Set length
+	jointDef.base.localFrameA.p = localAnchorA; // Set first local frame
+	jointDef.base.localFrameB.p = localAnchorB; // Set second local frame
+	jointDef.base.collideConnected = collideConnected; // Set collision flag
+	jointDef.dampingRatio = dampingRatio; // Set damping ratio
+	jointDef.enableLimit = enableLimit; // Enable limit
+	jointDef.enableMotor = enableMotor; // Enable motor
+	jointDef.enableSpring = enableSpring; // Enable spring
+	jointDef.hertz = hertz; // Set hertz
+	jointDef.maxLength = maxLength; // Set maximum length
+	jointDef.maxMotorForce = maxMotorForce; // Set maximum motor force
+	jointDef.minLength = minLength; // Set minimum length
+	jointDef.motorSpeed = motorSpeed; // Set motor speed
+	b2CreateDistanceJoint(worldId, &jointDef); // Create the joint
+}
+void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, float length) {
+    DistanceJointBodies(
+        worldId, 
+        bodyA, 
+        bodyB, 
+        length, 
+		false, // Collide connected
+		0.0f, // Damping ratio
+		true, // Enable limit
+		false, // Enable motor
+		true, // Enable spring
+        1.0f, // Hertz
+		{ 0.0f,0.0f }, // Local anchor A
+		{ 0.0f,0.0f }, // Local anchor B
+		length * 2.0f, // Maximum length
+		100.0f, // Maximum motor force
+		0.0f, // Minimum length
+		0.0f); // Motor speed
+}
 void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
     b2DistanceJointDef jointDef = b2DefaultDistanceJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
