@@ -44,7 +44,7 @@ public:
 			DrawText(btn.text.c_str(), padding + gui.x + btn.x + (btn.width - textLength) / 2, padding + gui.y + btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
 		}
 		for (Label lbl : labels) {
-			DrawText(lbl.text.c_str(), padding + gui.x + lbl.x, gui.y + lbl.y, lbl.fontSize, lbl.fontColor);
+			DrawText(lbl.text.c_str(), padding + gui.x + lbl.x, padding + gui.y + lbl.y, lbl.fontSize, lbl.fontColor);
 		}
 	}
 	void sizeToFit(bool sizeX = true, bool sizeY = true) {
