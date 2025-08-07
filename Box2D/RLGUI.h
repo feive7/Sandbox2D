@@ -9,9 +9,11 @@ struct Label {
 struct Button {
 	int x, y, width, height, fontSize;
 	Color bgColor;
+	Color bgColorSelected;
 	Color fontColor;
 	std::string text;
 	int id;
+	bool selected;
 };
 class GUI {
 private:
@@ -37,8 +39,9 @@ public:
 		DrawRectangle(gui.x, gui.y, padding + width, padding + height, { 255,255,255,120 });
 		DrawRectangleLines(gui.x, gui.y, padding + width, padding + height, BLACK);
 		for (Button btn : buttons) {
-			DrawRectangle(padding + gui.x + btn.x, padding + gui.y + btn.y, btn.width, btn.height, ColorBrightness(btn.bgColor, -0.2));
-			DrawRectangle(padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, btn.width - 4, btn.height - 4, btn.bgColor);
+			Color bgColor = (btn.selected ? btn.bgColorSelected : btn.bgColor);
+			DrawRectangle(padding + gui.x + btn.x, padding + gui.y + btn.y, btn.width, btn.height, ColorBrightness(bgColor, -0.2));
+			DrawRectangle(padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, btn.width - 4, btn.height - 4, bgColor);
 			int textLength = MeasureText(btn.text.c_str(), btn.fontSize);
 			DrawText(TextFormat("ID: %i", btn.id), padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, 10, btn.fontColor);
 			DrawText(btn.text.c_str(), padding + gui.x + btn.x + (btn.width - textLength) / 2, padding + gui.y + btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
@@ -64,6 +67,19 @@ public:
 
 		if(sizeX) width = maxWidth;
 		if(sizeY) height = maxHeight;
+	}
+	void deselectButtons() {
+		for (Button& btn : buttons) {
+			btn.selected = false;
+		}
+	}
+	void selectButton(int buttonId) {
+		if (buttonId == -1) return; // Ignore if not valid button
+		for (Button& btn : buttons) {
+			if (btn.id == buttonId) {
+				btn.selected = true;
+			}
+		}
 	}
 	int getHovering(Vector2 mousePosition) {
 		if (!active) return -1; // GUI is not active
