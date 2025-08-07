@@ -133,6 +133,13 @@ int main() {
         if (IsKeyPressed(KEY_R)) {
 			ResetScene(worldId, bodies); // Reset scene
         }
+        if (IsKeyPressed(KEY_Z)) {
+            // Undo
+            if (bodies.size() > 1) {
+                b2DestroyBody(bodies.back().id); // Destroy last body
+                bodies.pop_back(); // Remove last body
+            }
+        }
         if (IsKeyDown(KEY_Q)) {
             // Open spawn menu
             OTCD = false;
