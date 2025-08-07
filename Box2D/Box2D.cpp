@@ -375,6 +375,11 @@ int main() {
                 DrawJoint(worldId, jointArray[i]);
             }
         }
+        
+        if (Selection.mode == MODE_WELD && Selection.numOfBodyIds) {
+            if (b2Body_IsValid(Selection.bodyIds[0])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[0]));
+            if (b2Body_IsValid(Selection.bodyIds[1])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[1]));
+        }
         //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
         
         EndMode2D();
