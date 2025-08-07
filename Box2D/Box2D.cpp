@@ -45,9 +45,14 @@ void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
     bodies.push_back({ CreateHollowBox(worldId, {0.0f,0.0f}, {130.0f,130.0f}, false),BLUE });
 }
 void InitSpawnMenu() {
+    SpawnMenu.gui.x = 0;
+    SpawnMenu.gui.y = 0;
+    SpawnMenu.gui.width = GetScreenWidth();
+    SpawnMenu.gui.height = GetScreenHeight();
+    SpawnMenu.gui.padding = 10;
     SpawnMenu.gui.addButton({
-        .x = 10,
-        .y = 10,
+        .x = 0,
+        .y = 0,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -57,8 +62,8 @@ void InitSpawnMenu() {
         .id = 0,
         });
     SpawnMenu.gui.addButton({
-        .x = 145,
-        .y = 10,
+        .x = 135,
+        .y = 0,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -68,8 +73,8 @@ void InitSpawnMenu() {
         .id = 1,
         });
     SpawnMenu.gui.addButton({
-        .x = 280,
-        .y = 10,
+        .x = 270,
+        .y = 0,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -90,6 +95,8 @@ void InitSpawnMenu() {
                  //"M: Change Selection Mode\n"
                  "Scroll Wheel: Zoom Viewport\n"
 		});
+
+    SpawnMenu.gui.sizeToFit();
 }
 int main() {
     // Window Definition
@@ -120,7 +127,7 @@ int main() {
     InitSpawnMenu();
 
     // One time control display
-    bool OTCD = true;
+    bool OTCD = false;
 
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
@@ -178,8 +185,11 @@ int main() {
             }
         }
         else {
-            Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-            b2Vec2 mVec = { mPos.x,mPos.y };
+            Vector2 mousePos = GetMousePosition();
+            SpawnMenu.gui.x = mousePos.x;
+            SpawnMenu.gui.y = mousePos.y;
+            Vector2 mouseWorldPos = GetScreenToWorld2D(mousePos, viewport);
+            b2Vec2 mVec = { mouseWorldPos.x,mouseWorldPos.y };
             if (Selection.mode == MODE_SELECT) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     // Check if a body is under the mouse

@@ -18,6 +18,7 @@ private:
 	std::vector<Label> labels;
 	std::vector<Button> buttons;
 public:
+	int x, y, width, height, padding;
 	void addButton(const Button& btn) {
 		buttons.push_back(btn);
 	}
@@ -25,22 +26,41 @@ public:
 		labels.push_back(lbl);
 	}
 	void draw() {
-		DrawRectangle(0, 0, 800, 800, { 255,255,255,120 });
+		DrawRectangle(x, y, padding + width, padding + height, { 255,255,255,120 });
+		DrawRectangleLines(x, y, padding + width, padding + height, BLACK);
 		for (Button btn : buttons) {
-			DrawRectangle(btn.x, btn.y, btn.width, btn.height, ColorBrightness(btn.bgColor, -0.2));
-			DrawRectangle(btn.x + 2, btn.y + 2, btn.width - 4, btn.height - 4, btn.bgColor);
+			DrawRectangle(padding + x + btn.x, padding + y + btn.y, btn.width, btn.height, ColorBrightness(btn.bgColor, -0.2));
+			DrawRectangle(padding + x + btn.x + 2, padding + y + btn.y + 2, btn.width - 4, btn.height - 4, btn.bgColor);
 			int textLength = MeasureText(btn.text.c_str(), btn.fontSize);
-			DrawText(TextFormat("ID: %i", btn.id), btn.x + 2, btn.y + 2, 10, btn.fontColor);
-			DrawText(btn.text.c_str(), btn.x + (btn.width - textLength) / 2, btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
+			DrawText(TextFormat("ID: %i", btn.id), x + btn.x + 2, y + btn.y + 2, 10, btn.fontColor);
+			DrawText(btn.text.c_str(), padding + x + btn.x + (btn.width - textLength) / 2, y + btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
 		}
 		for (Label lbl : labels) {
-			DrawText(lbl.text.c_str(), lbl.x, lbl.y, lbl.fontSize, lbl.fontColor);
+			DrawText(lbl.text.c_str(), padding + x + lbl.x, y + lbl.y, lbl.fontSize, lbl.fontColor);
 		}
+	}
+	void sizeToFit() {
+		int maxWidth = 0;
+		int maxHeight = 0;
+
+		for (Button btn : buttons) {
+			maxWidth = fmax(maxWidth, btn.x + btn.width);
+			maxHeight = fmax(maxHeight, btn.y + btn.height);
+		}
+		for (Label lbl : labels) {
+			Vector2 measure = MeasureTextEx(GetFontDefault(), lbl.text.c_str(), lbl.fontSize, 2);
+			
+			maxWidth = fmax(maxWidth, lbl.x + measure.x);
+			maxHeight = fmax(maxHeight, lbl.y + measure.y);
+		}
+
+		width = maxWidth;
+		height = maxHeight;
 	}
 	int getHovering(Vector2 mousePosition) {
 		for (Button btn : buttons) {
-			if (mousePosition.x >= btn.x && mousePosition.x <= btn.x + btn.width &&
-				mousePosition.y >= btn.y && mousePosition.y <= btn.y + btn.height) {
+			if (mousePosition.x >= padding + x + btn.x && mousePosition.x <= padding + x + btn.x + btn.width &&
+				mousePosition.y >= padding + y + btn.y && mousePosition.y <= padding + y + btn.y + btn.height) {
 				return btn.id;
 			}
 		}
