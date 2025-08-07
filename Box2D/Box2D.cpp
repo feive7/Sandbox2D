@@ -80,6 +80,39 @@ void InitGUIs() {
         .text = "Spawn Cup",
         .id = 2,
         });
+    spawnMenu.addButton({
+        .x = 0,
+        .y = 55,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .fontColor = WHITE,
+        .text = "Spawn Plank",
+        .id = 3,
+        });
+    spawnMenu.addButton({
+        .x = 135,
+        .y = 55,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .fontColor = WHITE,
+        .text = "Spawn Pellet",
+        .id = 4,
+        });
+    spawnMenu.addButton({
+        .x = 270,
+        .y = 55,
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .fontColor = WHITE,
+        .text = "Spawn Tiny Box",
+        .id = 5,
+        });
     
     spawnMenu.sizeToFit();
 
@@ -178,6 +211,15 @@ int main() {
                 }
                 if (buttonId == 2) {
                     bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, true), RandomColor() });
+                }
+                if (buttonId == 3) {
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {20.0f,2.0f}, true), RandomColor() });
+                }
+                if (buttonId == 4) {
+                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 3.0f, true), RandomColor() });
+                }
+                if (buttonId == 5) {
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {3.0f,3.0f}, true), RandomColor() });
                 }
             }
         }
