@@ -96,6 +96,7 @@ b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool d
 }
 
 // Constraints & Joints
+void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, float length, bool collideConnected, float dampingRatio, bool enableLimit, bool enableMotor, bool enableSpring, float hertz, b2Vec2 localAnchorA, b2Vec2 localAnchorB, float maxLength, float maxMotorForce, float minLength, float motorSpeed) {
 void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
     b2DistanceJointDef jointDef = b2DefaultDistanceJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
