@@ -157,7 +157,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Constraint Mode",
+        .text = "Weld Mode",
         .id = MODE_JOINT,
         });
 
