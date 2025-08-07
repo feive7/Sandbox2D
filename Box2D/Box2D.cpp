@@ -20,6 +20,8 @@ struct RayBody {
     }
 };
 
+GUI spawnMenu;
+
 struct {
     int mode = MODE_SELECT;
     bool active;
@@ -31,10 +33,6 @@ struct {
         Selection.numOfBodyIds = 0;
     }
 } Selection;
-struct {
-    bool open;
-    GUI gui;
-} SpawnMenu;
 
 void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
     for (RayBody& body : bodies) {
@@ -44,13 +42,11 @@ void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
 
     bodies.push_back({ CreateHollowBox(worldId, {0.0f,0.0f}, {130.0f,130.0f}, false),BLUE });
 }
-void InitSpawnMenu() {
-    SpawnMenu.gui.x = 0;
-    SpawnMenu.gui.y = 0;
-    SpawnMenu.gui.width = GetScreenWidth();
-    SpawnMenu.gui.height = GetScreenHeight();
-    SpawnMenu.gui.padding = 10;
-    SpawnMenu.gui.addButton({
+void InitGUIs() {
+    spawnMenu.x = 0;
+    spawnMenu.y = 0;
+    spawnMenu.padding = 10;
+    spawnMenu.addButton({
         .x = 0,
         .y = 0,
         .width = 130,
@@ -61,7 +57,7 @@ void InitSpawnMenu() {
         .text = "Spawn Ball",
         .id = 0,
         });
-    SpawnMenu.gui.addButton({
+    spawnMenu.addButton({
         .x = 135,
         .y = 0,
         .width = 130,
@@ -72,7 +68,7 @@ void InitSpawnMenu() {
         .text = "Spawn Box",
         .id = 1,
         });
-    SpawnMenu.gui.addButton({
+    spawnMenu.addButton({
         .x = 270,
         .y = 0,
         .width = 130,
@@ -83,7 +79,7 @@ void InitSpawnMenu() {
         .text = "Spawn Cup",
         .id = 2,
         });
-    SpawnMenu.gui.addLabel({
+    spawnMenu.addLabel({
         .x = 10,
         .y = 70,
         .fontSize = 20,
@@ -96,7 +92,7 @@ void InitSpawnMenu() {
                  "Scroll Wheel: Zoom Viewport\n"
 		});
 
-    SpawnMenu.gui.sizeToFit();
+    spawnMenu.sizeToFit();
 }
 int main() {
     // Window Definition
@@ -124,7 +120,7 @@ int main() {
     ResetScene(worldId, bodies); // Reset scene
 
     // Spawn menu setup
-    InitSpawnMenu();
+    InitGUIs();
 
     // One time control display
     bool OTCD = false;
@@ -150,11 +146,11 @@ int main() {
         if (IsKeyDown(KEY_Q)) {
             // Open spawn menu
             OTCD = false;
-			SpawnMenu.open = true;
+			spawnMenu.active = true;
         }
         else {
             // Close spawn menu
-            SpawnMenu.open = false;
+            spawnMenu.active = false;
         }
         if (IsKeyPressed(KEY_M)) {
             Selection.mode++;
@@ -164,11 +160,11 @@ int main() {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
 
-        if (SpawnMenu.open) {
+        if (spawnMenu.active) {
             Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                int buttonId = SpawnMenu.gui.getHovering(mPos); // Get ID of button clicked
-                Vector2 spawnPos = GetScreenToWorld2D({ (float)SpawnMenu.gui.x,(float)SpawnMenu.gui.y }, viewport);
+                int buttonId = spawnMenu.getHovering(mPos); // Get ID of button clicked
+                Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
                 /*switch (buttonId) {
                     case 0: bodies.push_back({ CreateBall(worldId, {0.0f,0.0f}, 10.0f, true), RED }); break;
                     case 1: bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RED }); break;
@@ -187,8 +183,8 @@ int main() {
         }
         else {
             Vector2 mousePos = GetMousePosition();
-            SpawnMenu.gui.x = mousePos.x;
-            SpawnMenu.gui.y = mousePos.y;
+            spawnMenu.x = mousePos.x;
+            spawnMenu.y = mousePos.y;
             Vector2 mouseWorldPos = GetScreenToWorld2D(mousePos, viewport);
             b2Vec2 mVec = { mouseWorldPos.x,mouseWorldPos.y };
             if (Selection.mode == MODE_SELECT) {
@@ -274,10 +270,10 @@ int main() {
             int measure = MeasureText(text, 40);
             DrawText(text, (screenWidth - measure) / 2, (screenHeight - 40) / 2, 40, {200,200,200,255});
         }
-        if (SpawnMenu.open) {
-            SpawnMenu.gui.draw();
-            DrawCircle(SpawnMenu.gui.x, SpawnMenu.gui.y, 10, { 120,120,120,255 });
-            DrawCircle(SpawnMenu.gui.x, SpawnMenu.gui.y, 6, { 255,255,255,255 });
+        if (spawnMenu.active) {
+            spawnMenu.draw();
+            DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
+            DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
         }
 
         EndDrawing();
