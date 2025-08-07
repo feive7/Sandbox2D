@@ -144,12 +144,12 @@ void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
 void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB) {
     HingeBodies(id, bodyA, bodyB, b2Distance(b2Body_GetPosition(bodyA), b2Body_GetPosition(bodyB)));
 }
-void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
+void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2Vec2 anchorB) {
     b2WeldJointDef jointDef = b2DefaultWeldJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
     jointDef.base.bodyIdB = bodyB; // Set second body
-    jointDef.base.localFrameA.p = anchor; // Set first local frame
-    jointDef.base.localFrameB.p = anchor; // Set second local frame
+    jointDef.base.localFrameA.p = anchorA; // Set first local frame
+    jointDef.base.localFrameB.p = anchorB; // Set second local frame
     b2CreateWeldJoint(id, &jointDef); // Create the joint
 }
 void RevoluteJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {

@@ -22,13 +22,14 @@ struct RayBody {
 
 GUI spawnMenu;
 GUI controlMenu;
+GUI ToolMenu;
 
 struct {
     int mode = MODE_SELECT;
     bool active;
     b2BodyId bodyIds[10];
     int numOfBodyIds;
-    b2Vec2 localPoint;
+    b2Vec2 localPoints[10];
     void clear() {
         Selection.numOfBodyIds = 0;
     }
@@ -112,7 +113,6 @@ void InitGUIs() {
         .text = "Spawn Tiny Box",
         .id = 5,
         });
-    
     spawnMenu.sizeToFit();
 
     controlMenu.x = 0;
@@ -131,6 +131,8 @@ void InitGUIs() {
         "Scroll Wheel: Zoom Viewport\n"
         });
 	controlMenu.sizeToFit();
+
+
 }
 int main() {
     // Window Definition
@@ -161,7 +163,7 @@ int main() {
     InitGUIs();
 
     // One time control display
-    bool OTCD = true;
+    bool OTCD = false;
 
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
@@ -184,10 +186,6 @@ int main() {
         spawnMenu.active = IsKeyDown(KEY_Q);
 		controlMenu.active = IsKeyDown(KEY_C);
 
-        if (IsKeyPressed(KEY_M)) {
-            Selection.mode++;
-            Selection.mode %= MODE_COUNT;
-        }
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
@@ -234,7 +232,7 @@ int main() {
                     for (RayBody body : bodies) {
                         if (BodyContains(body.id, mVec)) {
                             Selection.bodyIds[0] = body.id;
-                            Selection.localPoint = b2Body_GetLocalPoint(body.id, mVec);
+                            Selection.localPoints[0] = b2Body_GetLocalPoint(body.id, mVec);
                             Selection.numOfBodyIds = 1;
                             break;
                         }
@@ -247,7 +245,7 @@ int main() {
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Freeze the body
                     b2Body_SetMotionLocks(Selection.bodyIds[0], {false, false, true}); // Unfreeze the body
-                    DragBody(Selection.bodyIds[0], mVec, Selection.localPoint);
+                    DragBody(Selection.bodyIds[0], mVec, Selection.localPoints[0]);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                         BodyFreeze(Selection.bodyIds[0]); // Freeze the body
@@ -267,6 +265,7 @@ int main() {
                         if (BodyContains(body.id, mVec)) {
                             // Add body to selection
                             Selection.bodyIds[Selection.numOfBodyIds] = body.id;
+                            Selection.localPoints[Selection.numOfBodyIds] = b2Body_GetLocalPoint(body.id, mVec);
                             Selection.numOfBodyIds++;
                             break;
                         }
@@ -274,7 +273,7 @@ int main() {
                 }
                 if (Selection.numOfBodyIds == 2) {
                     if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
-                        //HingeBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
+                        WeldBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1], Selection.localPoints[0], Selection.localPoints[1]);
                         printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
                     }
                     else {
@@ -300,7 +299,7 @@ int main() {
             b2JointId jointArray[3];
             b2Body_GetJoints(body.id, jointArray, 3);
             for (int i = 0; i < b2Body_GetJointCount(body.id); i++) {
-                DrawJoint(jointArray[i]);
+                DrawJoint(worldId, jointArray[i]);
             }
         }
         //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
