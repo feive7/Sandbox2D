@@ -28,6 +28,15 @@ public:
 	void addLabel(const Label& lbl) {
 		labels.push_back(lbl);
 	}
+	Button* getButtonByID(int id) {
+		if (id == -1) return nullptr; // Escape quicker
+		for (Button& btn : buttons) {
+			if (btn.id == id) {
+				return &btn;
+			}
+		}
+		return nullptr; // Button not found
+	}
 	Vector2 getAdjustedPosition() {
 		float guiX = fmin(GetScreenWidth() - (width + padding), x);
 		float guiY = fmin(GetScreenHeight() - (height + padding), y);
@@ -75,11 +84,9 @@ public:
 	}
 	void selectButton(int buttonId) {
 		if (buttonId == -1) return; // Ignore if not valid button
-		for (Button& btn : buttons) {
-			if (btn.id == buttonId) {
-				btn.selected = true;
-			}
-		}
+		Button* button = getButtonByID(buttonId);
+		if (button == nullptr) return;
+		button->selected = true;
 	}
 	int getHovering(Vector2 mousePosition) {
 		if (!active) return -1; // GUI is not active
@@ -92,4 +99,5 @@ public:
 		}
 		return -1;
 	}
+	
 };
