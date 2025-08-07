@@ -47,7 +47,7 @@ public:
 			DrawText(lbl.text.c_str(), padding + gui.x + lbl.x, gui.y + lbl.y, lbl.fontSize, lbl.fontColor);
 		}
 	}
-	void sizeToFit() {
+	void sizeToFit(bool sizeX = true, bool sizeY = true) {
 		int maxWidth = 0;
 		int maxHeight = 0;
 
@@ -62,8 +62,8 @@ public:
 			maxHeight = fmax(maxHeight, padding + lbl.y + measure.y);
 		}
 
-		width = maxWidth;
-		height = maxHeight;
+		if(sizeX) width = maxWidth;
+		if(sizeY) height = maxHeight;
 	}
 	int getHovering(Vector2 mousePosition) {
 		if (!active) return -1; // GUI is not active
