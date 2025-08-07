@@ -46,6 +46,7 @@ void DrawBody(b2BodyId id, Color color) {
     }
 }
 void DrawJoint(b2WorldId world, b2JointId joint) {
+    if (!b2Joint_IsValid(joint)) return;
     b2BodyId bodyA = b2Joint_GetBodyA(joint);
     b2BodyId bodyB = b2Joint_GetBodyB(joint);
 
