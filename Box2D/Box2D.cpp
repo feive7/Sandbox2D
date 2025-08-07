@@ -22,7 +22,7 @@ struct RayBody {
 
 GUI spawnMenu;
 GUI controlMenu;
-GUI ToolMenu;
+GUI toolMenu;
 
 struct {
     int mode = MODE_SELECT;
@@ -132,7 +132,36 @@ void InitGUIs() {
         });
 	controlMenu.sizeToFit();
 
+    toolMenu.x = 0;
+    toolMenu.y = 0;
+    toolMenu.padding = 20;
+    toolMenu.addButton({
+        .x = 0,
+        .y = 0,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = BLUE,
+        .fontColor = WHITE,
+        .text = "Drag Mode",
+        .id = MODE_SELECT,
+        .selected = true,
+        });
+    toolMenu.addButton({
+        .x = 0,
+        .y = 55,
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = BLUE,
+        .fontColor = WHITE,
+        .text = "Constraint Mode",
+        .id = MODE_JOINT,
+        });
 
+    toolMenu.sizeToFit();
 }
 int main() {
     // Window Definition
@@ -184,12 +213,23 @@ int main() {
             }
         }
         spawnMenu.active = IsKeyDown(KEY_Q);
-		controlMenu.active = IsKeyDown(KEY_C);
+		toolMenu.active = IsKeyDown(KEY_C);
 
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
 
+        if (toolMenu.active) {
+            Vector2 mPos = GetMousePosition();
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                int buttonId = toolMenu.getHovering(mPos); // Get ID of button clicked
+                if (buttonId != -1) { // Button was pressed
+                    toolMenu.deselectButtons(); // Clear selected button
+                    toolMenu.selectButton(buttonId); // Select mode
+                    Selection.mode = buttonId;
+                }
+            }
+        }
         if (spawnMenu.active) {
             Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -311,7 +351,7 @@ int main() {
             DrawText(text, (screenWidth - measure) / 2, (screenHeight - 40) / 2, 40, {200,200,200,255});
         }
         spawnMenu.draw();
-        controlMenu.draw();
+        toolMenu.draw();
         if (spawnMenu.active) {
             DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
             DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
