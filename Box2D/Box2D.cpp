@@ -21,6 +21,7 @@ struct RayBody {
 };
 
 GUI spawnMenu;
+GUI controlMenu;
 
 struct {
     int mode = MODE_SELECT;
@@ -79,20 +80,25 @@ void InitGUIs() {
         .text = "Spawn Cup",
         .id = 2,
         });
-    spawnMenu.addLabel({
-        .x = 10,
-        .y = 70,
+    
+    spawnMenu.sizeToFit();
+
+    controlMenu.x = 0;
+	controlMenu.y = 0;
+	controlMenu.padding = 20;
+    controlMenu.addLabel({
+        .x = 0,
+        .y = 0,
         .fontSize = 20,
         .fontColor = BLACK,
         .text = "Q: Open Spawn Menu\n"
                  "Left Click: Drag Body\n"
-				 "Right Click while dragging: Freeze Body\n"
+                 "Right Click while dragging: Freeze Body\n"
                  "R: Reset Scene\n"
-                 //"M: Change Selection Mode\n"
-                 "Scroll Wheel: Zoom Viewport\n"
-		});
-
-    spawnMenu.sizeToFit();
+        //"M: Change Selection Mode\n"
+        "Scroll Wheel: Zoom Viewport\n"
+        });
+	controlMenu.sizeToFit();
 }
 int main() {
     // Window Definition
@@ -143,15 +149,8 @@ int main() {
                 bodies.pop_back(); // Remove last body
             }
         }
-        if (IsKeyDown(KEY_Q)) {
-            // Open spawn menu
-            OTCD = false;
-			spawnMenu.active = true;
-        }
-        else {
-            // Close spawn menu
-            spawnMenu.active = false;
-        }
+        spawnMenu.active = IsKeyDown(KEY_Q);
+		controlMenu.active = IsKeyDown(KEY_C);
         if (IsKeyPressed(KEY_M)) {
             Selection.mode++;
             Selection.mode %= MODE_COUNT;
@@ -270,11 +269,12 @@ int main() {
             int measure = MeasureText(text, 40);
             DrawText(text, (screenWidth - measure) / 2, (screenHeight - 40) / 2, 40, {200,200,200,255});
         }
+        spawnMenu.draw();
         if (spawnMenu.active) {
-            spawnMenu.draw();
             DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
             DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
         }
+        controlMenu.draw();
 
         EndDrawing();
     }
