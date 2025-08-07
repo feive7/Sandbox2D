@@ -78,3 +78,11 @@ Color RandomColor() {
     unsigned char b = GetRandomValue(0, 255);
     return { r,g,b,255 };
 }
+
+struct RayBody {
+    b2BodyId id;
+    Color color;
+    void draw() {
+        DrawBody(id, color);
+    }
+};

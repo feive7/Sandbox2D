@@ -13,13 +13,6 @@ enum Selection_mode {
     MODE_WHEEL,
     MODE_COUNT,
 };
-struct RayBody {
-    b2BodyId id;
-    Color color;
-    void draw() {
-        DrawBody(id, color);
-    }
-};
 
 GUI spawnMenu;
 GUI controlMenu;
