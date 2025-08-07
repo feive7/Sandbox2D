@@ -156,6 +156,17 @@ void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2
     b2Body_SetAwake(bodyA, true);
     b2Body_SetAwake(bodyB, true);
 }
+void WheelBodies(b2WorldId id, b2BodyId bodyBody, b2BodyId wheelBody, b2Vec2 anchor) {
+    b2WheelJointDef jointDef = b2DefaultWheelJointDef(); // Create joint definition
+    jointDef.base.bodyIdA = bodyBody; // Set first body
+    jointDef.base.bodyIdB = wheelBody; // Set second body
+    jointDef.base.localFrameA.p = anchor; // Set first local frame
+    jointDef.base.localFrameB.p = {0.0f,0.0f}; // Set second local frame
+    jointDef.hertz = 10.0f;
+    jointDef.enableMotor = true; // Enable motor for wheel
+    jointDef.maxMotorTorque = 1000.0f; // Set max motor torque
+	b2CreateWheelJoint(id, &jointDef); // Create the joint
+}
 void RevoluteJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
     b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef(); // Create joint definition
     jointDef.base.bodyIdA = bodyA; // Set first body
