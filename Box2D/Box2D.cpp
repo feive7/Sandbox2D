@@ -201,7 +201,7 @@ int main() {
     InitGUIs();
 
     // One time control display
-    bool OTCD = false;
+    bool OTCD = true;
 
     // Simulation setup
     float timeStep = 1.0f / 60.0f; // 60Hz
