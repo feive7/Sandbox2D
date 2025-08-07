@@ -10,6 +10,7 @@
 enum Selection_mode {
     MODE_SELECT,
     MODE_WELD,
+    MODE_WHEEL,
     MODE_COUNT,
 };
 struct RayBody {
@@ -159,6 +160,18 @@ void InitGUIs() {
         .fontColor = WHITE,
         .text = "Weld Mode",
         .id = MODE_WELD,
+        });
+    toolMenu.addButton({
+        .x = 0,
+        .y = 110,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = BLUE,
+        .fontColor = WHITE,
+        .text = "Wheel Mode",
+        .id = MODE_WHEEL,
         });
     toolMenu.sizeToFit();
 }
@@ -328,6 +341,21 @@ int main() {
                         printf("Ignoring self joint\n");
                     }
                     Selection.clear(); // Clear selection regardless
+                }
+            }
+            else if (Selection.mode == MODE_WHEEL) {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+                    b2Vec2 mVec = { mPos.x,mPos.y };
+                    for (RayBody body : bodies) {
+                        if (BodyContains(body.id, mVec)) {
+                            b2Vec2 pointOnBody = b2Body_GetLocalPoint(body.id, mVec);
+                            RayBody wheel = { CreateBall(worldId, {mVec.x,mVec.y}, 10.0f, true), DARKGRAY };
+                            WheelBodies(worldId, body.id, wheel.id, pointOnBody);
+                            bodies.push_back(wheel);
+                            break;
+                        }
+                    }
                 }
             }
         }
