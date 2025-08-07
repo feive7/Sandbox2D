@@ -116,23 +116,6 @@ void InitGUIs() {
         });
     spawnMenu.sizeToFit();
 
-    controlMenu.x = 0;
-	controlMenu.y = 0;
-	controlMenu.padding = 20;
-    controlMenu.addLabel({
-        .x = 0,
-        .y = 0,
-        .fontSize = 20,
-        .fontColor = BLACK,
-        .text = "Q: Open Spawn Menu\n"
-                 "Left Click: Drag Body\n"
-                 "Right Click while dragging: Freeze Body\n"
-                 "R: Reset Scene\n"
-        //"M: Change Selection Mode\n"
-        "Scroll Wheel: Zoom Viewport\n"
-        });
-	controlMenu.sizeToFit();
-
     toolMenu.x = 0;
     toolMenu.y = 0;
     toolMenu.padding = 20;
@@ -396,7 +379,7 @@ int main() {
         
         EndMode2D();
         if (OTCD) {
-            const char* text = "Hold C to open control menu";
+            const char* text = "Hold C to open tool menu";
             int measure = MeasureText(text, 40);
             DrawText(text, (screenWidth - measure) / 2, (screenHeight - 40) / 2, 40, {200,200,200,255});
         }
@@ -405,9 +388,6 @@ int main() {
         if (spawnMenu.active) {
             DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
             DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
-        }
-        if (controlMenu.active) {
-            OTCD = false;
         }
 
         EndDrawing();
