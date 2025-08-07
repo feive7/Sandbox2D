@@ -9,7 +9,7 @@
 
 enum Selection_mode {
     MODE_SELECT,
-    MODE_JOINT,
+    MODE_WELD,
     MODE_COUNT,
 };
 struct RayBody {
@@ -153,14 +153,13 @@ void InitGUIs() {
         .y = 55,
         .width = 130,
         .height = 50,
-        .fontSize = 15,
+        .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
         .text = "Weld Mode",
-        .id = MODE_JOINT,
+        .id = MODE_WELD,
         });
-
     toolMenu.sizeToFit();
 }
 int main() {
@@ -305,7 +304,7 @@ int main() {
                     }
                 }
             }
-            else if (Selection.mode == MODE_JOINT) {
+            else if (Selection.mode == MODE_WELD) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     // Check if a body is under the mouse
                     Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
