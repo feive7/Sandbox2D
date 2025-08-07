@@ -39,7 +39,7 @@ public:
 			DrawRectangle(padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, btn.width - 4, btn.height - 4, btn.bgColor);
 			int textLength = MeasureText(btn.text.c_str(), btn.fontSize);
 			DrawText(TextFormat("ID: %i", btn.id), padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, 10, btn.fontColor);
-			DrawText(btn.text.c_str(), padding + gui.x + btn.x + (btn.width - textLength) / 2, gui.y + btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
+			DrawText(btn.text.c_str(), padding + gui.x + btn.x + (btn.width - textLength) / 2, padding + gui.y + btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
 		}
 		for (Label lbl : labels) {
 			DrawText(lbl.text.c_str(), padding + gui.x + lbl.x, gui.y + lbl.y, lbl.fontSize, lbl.fontColor);
