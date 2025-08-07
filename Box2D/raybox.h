@@ -45,11 +45,26 @@ void DrawBody(b2BodyId id, Color color) {
         }
     }
 }
-void DrawJoint(b2JointId joint) {
-    b2Vec2 posA = b2Body_GetPosition(b2Joint_GetBodyA(joint));
-    b2Vec2 posB = b2Body_GetPosition(b2Joint_GetBodyB(joint));
-    DrawLine(posA.x, posA.y, posB.x, posB.y, BLACK);
+void DrawJoint(b2WorldId world, b2JointId joint) {
+    b2BodyId bodyA = b2Joint_GetBodyA(joint);
+    b2BodyId bodyB = b2Joint_GetBodyB(joint);
+
+    b2Transform bodyATransform = b2Body_GetTransform(bodyA);
+    b2Transform bodyBTransform = b2Body_GetTransform(bodyB);
+
+    b2Transform localFrameA = b2Joint_GetLocalFrameA(joint);
+    b2Transform localFrameB = b2Joint_GetLocalFrameB(joint);
+
+    // Combine localFrameA with bodyA's transform to get world anchor A
+    b2Vec2 anchorA = b2TransformPoint(bodyATransform, localFrameA.p);
+
+    // Combine localFrameB with bodyB's transform to get world anchor B
+    b2Vec2 anchorB = b2TransformPoint(bodyBTransform, localFrameB.p);
+
+    DrawLine(anchorA.x, anchorA.y, anchorB.x, anchorB.y, BLACK);
 }
+
+
 void DrawAABB(b2AABB aabb) {
     b2Vec2 extents = b2MulSV(2.0f,b2AABB_Extents(aabb));
     DrawRectangleLines(aabb.lowerBound.x, aabb.lowerBound.y, extents.x, extents.y, LIME);
