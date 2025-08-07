@@ -172,6 +172,11 @@ void InitGUIs() {
         });
     toolMenu.sizeToFit();
 }
+void SetMode(int mode) {
+    Selection.mode = mode;
+    toolMenu.deselectButtons();
+    toolMenu.selectButton(mode);
+}
 int main() {
     // Window Definition
     const int screenWidth = 800;
