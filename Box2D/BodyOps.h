@@ -151,6 +151,10 @@ void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2
     jointDef.base.localFrameA.p = anchorA; // Set first local frame
     jointDef.base.localFrameB.p = anchorB; // Set second local frame
     b2CreateWeldJoint(id, &jointDef); // Create the joint
+
+    // Wake both bodies
+    b2Body_SetAwake(bodyA, true);
+    b2Body_SetAwake(bodyB, true);
 }
 void RevoluteJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
     b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef(); // Create joint definition
