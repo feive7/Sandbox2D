@@ -19,6 +19,7 @@ private:
 	std::vector<Button> buttons;
 public:
 	int x, y, width, height, padding;
+	bool active;
 	void addButton(const Button& btn) {
 		buttons.push_back(btn);
 	}
@@ -31,6 +32,7 @@ public:
 		return { guiX, guiY };
 	}
 	void draw() {
+		if (!active) return; // Don't draw if not active
 		Vector2 gui = getAdjustedPosition();
 		DrawRectangle(gui.x, gui.y, padding + width, padding + height, { 255,255,255,120 });
 		DrawRectangleLines(gui.x, gui.y, padding + width, padding + height, BLACK);
@@ -64,6 +66,7 @@ public:
 		height = maxHeight;
 	}
 	int getHovering(Vector2 mousePosition) {
+		if (!active) return -1; // GUI is not active
 		Vector2 adjustedPosition = getAdjustedPosition();
 		for (Button btn : buttons) {
 			if (mousePosition.x >= padding + adjustedPosition.x + btn.x && mousePosition.x <= padding + adjustedPosition.x + btn.x + btn.width &&
