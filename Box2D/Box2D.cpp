@@ -168,19 +168,20 @@ int main() {
             Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 int buttonId = SpawnMenu.gui.getHovering(mPos); // Get ID of button clicked
+                Vector2 spawnPos = GetScreenToWorld2D({ (float)SpawnMenu.gui.x,(float)SpawnMenu.gui.y }, viewport);
                 /*switch (buttonId) {
                     case 0: bodies.push_back({ CreateBall(worldId, {0.0f,0.0f}, 10.0f, true), RED }); break;
                     case 1: bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RED }); break;
                     case 2: bodies.push_back({ CreateCup(worldId, {0.0f,0.0f}, {30.0f,30.0f}, true), RED }); break;
                 }*/
                 if (buttonId == 0) {
-                    bodies.push_back({ CreateBall(worldId, {0.0f,0.0f}, 10.0f, true), RandomColor()});
+                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, true), RandomColor()});
                 }
                 if (buttonId == 1) {
-                    bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RandomColor() });
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {10.0f,10.0f}, true), RandomColor() });
                 }
                 if (buttonId == 2) {
-                    bodies.push_back({ CreateCup(worldId, {0.0f,0.0f}, {20.0f,20.0f}, true), RandomColor() });
+                    bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, true), RandomColor() });
                 }
             }
         }
@@ -275,6 +276,8 @@ int main() {
         }
         if (SpawnMenu.open) {
             SpawnMenu.gui.draw();
+            DrawCircle(SpawnMenu.gui.x, SpawnMenu.gui.y, 10, { 120,120,120,255 });
+            DrawCircle(SpawnMenu.gui.x, SpawnMenu.gui.y, 6, { 255,255,255,255 });
         }
 
         EndDrawing();
