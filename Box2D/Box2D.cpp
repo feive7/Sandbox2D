@@ -201,9 +201,17 @@ int main() {
 
     while (!WindowShouldClose()) {
         // Handle inputs
-        float mwMove = GetMouseWheelMove();
+        if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
+            Vector2 mDelta = GetMouseDelta();
+            viewport.offset.x += mDelta.x;
+            viewport.offset.y += mDelta.y;
+        }
         if (IsKeyPressed(KEY_R)) {
 			ResetScene(worldId, bodies); // Reset scene
+            viewport.offset = { 400.0f, 400.0f };
+            viewport.rotation = 180;
+            viewport.target = { 0.0f,0.0f };
+            viewport.zoom = 3.0f;
         }
         if (IsKeyPressed(KEY_Z)) {
             // Undo
@@ -215,6 +223,7 @@ int main() {
         spawnMenu.active = IsKeyDown(KEY_Q);
 		toolMenu.active = IsKeyDown(KEY_C);
 
+        float mwMove = GetMouseWheelMove();
         if (mwMove) {
             viewport.zoom *= pow(2.0,mwMove / 10.0f);
         }
