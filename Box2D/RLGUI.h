@@ -44,14 +44,14 @@ public:
 		int maxHeight = 0;
 
 		for (Button btn : buttons) {
-			maxWidth = fmax(maxWidth, btn.x + btn.width);
-			maxHeight = fmax(maxHeight, btn.y + btn.height);
+			maxWidth = fmax(maxWidth, padding + btn.x + btn.width);
+			maxHeight = fmax(maxHeight, padding + btn.y + btn.height);
 		}
 		for (Label lbl : labels) {
 			Vector2 measure = MeasureTextEx(GetFontDefault(), lbl.text.c_str(), lbl.fontSize, 2);
 			
-			maxWidth = fmax(maxWidth, lbl.x + measure.x);
-			maxHeight = fmax(maxHeight, lbl.y + measure.y);
+			maxWidth = fmax(maxWidth, padding + lbl.x + measure.x);
+			maxHeight = fmax(maxHeight, padding + lbl.y + measure.y);
 		}
 
 		width = maxWidth;
