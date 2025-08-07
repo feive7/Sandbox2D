@@ -173,6 +173,20 @@ void InitGUIs() {
         .text = "Wheel Mode",
         .id = MODE_WHEEL,
         });
+    toolMenu.addLabel({
+		.x = 0,
+		.y = 165,
+		.fontSize = 20,
+		.fontColor = BLACK,
+        .text = "Left Click: Grab Body, Select\n"
+                "Right Click While Grabbing: Freeze Body\n"
+                "C: Open Tool Menu\n"
+                "Z: Undo Last Body\n"
+                "R: Reset Scene\n"
+                "Q: Open Spawn Menu\n"
+				"Scroll Wheel: Zoom Viewport\n"
+				"Middle Mouse Button: Pan Viewport\n"
+        });
     toolMenu.sizeToFit();
 }
 int main() {
