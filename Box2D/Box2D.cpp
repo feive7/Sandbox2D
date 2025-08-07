@@ -30,7 +30,6 @@ struct {
     int numOfBodyIds;
     b2Vec2 localPoint;
     void clear() {
-        Selection.numOfBodyIds = {};
         Selection.numOfBodyIds = 0;
     }
 } Selection;
