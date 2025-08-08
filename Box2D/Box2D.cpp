@@ -35,7 +35,7 @@ void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
     }
     bodies.clear(); // Clear bodies
 
-    bodies.push_back({ CreateHollowBox(worldId, {0.0f,0.0f}, {130.0f,130.0f}, false),BLUE });
+    bodies.push_back({ CreateHollowBox(worldId, {0.0f,0.0f}, {130.0f,130.0f}, b2_staticBody),BLUE });
 }
 void InitGUIs() {
     spawnMenu.x = 0;
@@ -283,17 +283,17 @@ int main() {
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
                 switch (buttonId) {
                 case 0:
-                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, true), RandomColor() }); break;
+                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 case 1:
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {10.0f,10.0f}, true), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {10.0f,10.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 2:
-                    bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, true), RandomColor() }); break;
+                    bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 3:
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {20.0f,2.0f}, true), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {20.0f,2.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 4:
-                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 3.0f, true), RandomColor() }); break;
+                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 3.0f, b2_dynamicBody), RandomColor() }); break;
                 case 5:
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {3.0f,3.0f}, true), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
                 }
             }
         }
@@ -360,7 +360,7 @@ int main() {
                     for (RayBody body : bodies) {
                         if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
                             b2Vec2 pointOnBody = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
-                            RayBody wheel = { CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 10.0f, true), DARKGRAY };
+                            RayBody wheel = { CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 10.0f, b2_dynamicBody), DARKGRAY };
                             WheelBodies(worldId, body.id, wheel.id, pointOnBody);
                             bodies.push_back(wheel);
                             break;
@@ -371,11 +371,11 @@ int main() {
             else if (Selection.mode == MODE_DRAW) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
                     // Spawn a new box at the mouse position
-                    bodies.push_back({ CreateBox(worldId, { mWorldPos.x,mWorldPos.y }, {3.0f,3.0f}, true), RandomColor() });
+                    bodies.push_back({ CreateBox(worldId, { mWorldPos.x,mWorldPos.y }, {3.0f,3.0f}, b2_dynamicBody), RandomColor() });
                 }
                 else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 					// Spawn a new ball at the mouse position
-					bodies.push_back({ CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 3.0f, true), RandomColor() });
+					bodies.push_back({ CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 3.0f, b2_dynamicBody), RandomColor() });
                 }
             }
         }
