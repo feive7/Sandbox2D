@@ -227,6 +227,10 @@ int main() {
     bool paused = false;
 
     while (!WindowShouldClose()) {
+        // Get inputs
+        Vector2 mPos = GetMousePosition();
+		Vector2 mWorldPos = GetScreenToWorld2D(mPos, viewport);
+
         // Handle inputs
         if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
             Vector2 mDelta = GetMouseDelta();
@@ -265,7 +269,6 @@ int main() {
         }
 
         if (toolMenu.active) {
-            Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 int buttonId = toolMenu.click(mPos); // Get ID of button clicked
                 if (buttonId != -1) { // Button was pressed
@@ -274,7 +277,6 @@ int main() {
             }
         }
         if (spawnMenu.active) {
-            Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 spawnMenu.deselectButtons(); // Deselect all buttons
                 int buttonId = spawnMenu.click(mPos); // Get ID of button clicked
@@ -296,19 +298,16 @@ int main() {
             }
         }
         if (!toolMenu.active && !spawnMenu.active) {
-            Vector2 mousePos = GetMousePosition();
-            spawnMenu.x = mousePos.x;
-            spawnMenu.y = mousePos.y;
+            spawnMenu.x = mPos.x;
+            spawnMenu.y = mPos.y;
             
-            Vector2 mouseWorldPos = GetScreenToWorld2D(mousePos, viewport);
-            b2Vec2 mVec = { mouseWorldPos.x,mouseWorldPos.y };
             if (Selection.mode == MODE_DRAG) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     // Check if a body is under the mouse
                     for (RayBody body : bodies) {
-                        if (BodyContains(body.id, mVec)) {
+                        if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
                             Selection.bodyIds[0] = body.id;
-                            Selection.localPoints[0] = b2Body_GetLocalPoint(body.id, mVec);
+                            Selection.localPoints[0] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
                             Selection.numOfBodyIds = 1;
                             break;
                         }
@@ -321,7 +320,7 @@ int main() {
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
 					b2Body_SetMotionLocks(Selection.bodyIds[0], { false, false, true }); // Lock the body in place
-                    DragBody(Selection.bodyIds[0], mVec, Selection.localPoints[0]);
+                    DragBody(Selection.bodyIds[0], { mWorldPos.x,mWorldPos.y }, Selection.localPoints[0]);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                         BodyFreeze(Selection.bodyIds[0]); // Freeze the body
@@ -335,13 +334,11 @@ int main() {
             else if (Selection.mode == MODE_WELD) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     // Check if a body is under the mouse
-                    Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-                    b2Vec2 mVec = { mPos.x,mPos.y };
                     for (RayBody body : bodies) {
-                        if (BodyContains(body.id, mVec)) {
+                        if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
                             // Add body to selection
                             Selection.bodyIds[Selection.numOfBodyIds] = body.id;
-                            Selection.localPoints[Selection.numOfBodyIds] = b2Body_GetLocalPoint(body.id, mVec);
+                            Selection.localPoints[Selection.numOfBodyIds] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
                             Selection.numOfBodyIds++;
                             break;
                         }
@@ -360,12 +357,10 @@ int main() {
             }
             else if (Selection.mode == MODE_WHEEL) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                    Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-                    b2Vec2 mVec = { mPos.x,mPos.y };
                     for (RayBody body : bodies) {
-                        if (BodyContains(body.id, mVec)) {
-                            b2Vec2 pointOnBody = b2Body_GetLocalPoint(body.id, mVec);
-                            RayBody wheel = { CreateBall(worldId, {mVec.x,mVec.y}, 10.0f, true), DARKGRAY };
+                        if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
+                            b2Vec2 pointOnBody = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
+                            RayBody wheel = { CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 10.0f, true), DARKGRAY };
                             WheelBodies(worldId, body.id, wheel.id, pointOnBody);
                             bodies.push_back(wheel);
                             break;
@@ -374,15 +369,13 @@ int main() {
                 }
             }
             else if (Selection.mode == MODE_DRAW) {
-                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
-                b2Vec2 mVec = { mPos.x,mPos.y };
                 if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
                     // Spawn a new box at the mouse position
-                    bodies.push_back({ CreateBox(worldId, {mVec.x,mVec.y}, {3.0f,3.0f}, true), RandomColor() });
+                    bodies.push_back({ CreateBox(worldId, { mWorldPos.x,mWorldPos.y }, {3.0f,3.0f}, true), RandomColor() });
                 }
                 else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 					// Spawn a new ball at the mouse position
-					bodies.push_back({ CreateBall(worldId, {mVec.x,mVec.y}, 3.0f, true), RandomColor() });
+					bodies.push_back({ CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 3.0f, true), RandomColor() });
                 }
             }
         }
