@@ -280,6 +280,7 @@ int main() {
             Vector2 mousePos = GetMousePosition();
             spawnMenu.x = mousePos.x;
             spawnMenu.y = mousePos.y;
+            
             Vector2 mouseWorldPos = GetScreenToWorld2D(mousePos, viewport);
             b2Vec2 mVec = { mouseWorldPos.x,mouseWorldPos.y };
             if (Selection.mode == MODE_SELECT) {
