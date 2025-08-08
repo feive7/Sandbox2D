@@ -8,7 +8,7 @@
 #include <BodyOps.h>
 
 enum Selection_mode {
-    MODE_SELECT,
+    MODE_DRAG,
     MODE_WELD,
     MODE_WHEEL,
     MODE_DRAW,
@@ -20,7 +20,7 @@ GUI controlMenu;
 GUI toolMenu;
 
 struct {
-    int mode = MODE_SELECT;
+    int mode = MODE_DRAG;
     b2BodyId bodyIds[10];
     int numOfBodyIds;
     b2Vec2 localPoints[10];
@@ -128,7 +128,7 @@ void InitGUIs() {
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
         .text = "Drag Mode (1)",
-        .id = MODE_SELECT,
+        .id = MODE_DRAG,
         .selected = true,
         });
     toolMenu.addButton({
@@ -252,7 +252,7 @@ int main() {
         if (IsKeyPressed(KEY_SPACE)) {
             paused = !paused;
         }
-		if (IsKeyPressed(KEY_ONE)) SetMode(MODE_SELECT);
+		if (IsKeyPressed(KEY_ONE)) SetMode(MODE_DRAG);
 		if (IsKeyPressed(KEY_TWO)) SetMode(MODE_WELD);
 		if (IsKeyPressed(KEY_THREE)) SetMode(MODE_WHEEL);
 		if (IsKeyPressed(KEY_FOUR)) SetMode(MODE_DRAW);
@@ -302,7 +302,7 @@ int main() {
             
             Vector2 mouseWorldPos = GetScreenToWorld2D(mousePos, viewport);
             b2Vec2 mVec = { mouseWorldPos.x,mouseWorldPos.y };
-            if (Selection.mode == MODE_SELECT) {
+            if (Selection.mode == MODE_DRAG) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     // Check if a body is under the mouse
                     for (RayBody body : bodies) {
