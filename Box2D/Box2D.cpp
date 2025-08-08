@@ -247,6 +247,10 @@ int main() {
                 bodies.pop_back(); // Remove last body
             }
         }
+		if (IsKeyPressed(KEY_ONE)) SetMode(MODE_SELECT);
+		if (IsKeyPressed(KEY_TWO)) SetMode(MODE_WELD);
+		if (IsKeyPressed(KEY_THREE)) SetMode(MODE_WHEEL);
+		if (IsKeyPressed(KEY_FOUR)) SetMode(MODE_DRAW);
         spawnMenu.active = IsKeyDown(KEY_Q);
 		toolMenu.active = IsKeyDown(KEY_C);
 
