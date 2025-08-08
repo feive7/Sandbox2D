@@ -21,6 +21,7 @@ private:
 	std::vector<Button> buttons;
 public:
 	int x, y, width, height, padding;
+	bool autoSize; // Automatically size to fit buttons and labels
 	bool active;
 	void addButton(const Button& btn) {
 		buttons.push_back(btn);
@@ -49,6 +50,10 @@ public:
 		DrawRectangleLines(gui.x, gui.y, padding + width, padding + height, BLACK);
 		for (Button btn : buttons) {
 			int textLength = MeasureText(btn.text.c_str(), btn.fontSize);
+			if(autoSize) {
+				btn.width = fmax(btn.width, textLength + 4); // Add padding
+				btn.height = fmax(btn.height, btn.fontSize + 4); // Add padding
+			}
 			btn.width = fmax(btn.width, textLength + 4); // Add padding
 			Color bgColor = (btn.selected ? btn.bgColorSelected : btn.bgColor);
 			DrawRectangle(padding + gui.x + btn.x, padding + gui.y + btn.y, btn.width, btn.height, ColorBrightness(bgColor, -0.2));
