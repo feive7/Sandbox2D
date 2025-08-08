@@ -376,9 +376,9 @@ int main() {
             else if (Selection.mode == MODE_DRAW) {
                 Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
                 b2Vec2 mVec = { mPos.x,mPos.y };
-                if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
 					// Pick a body to draw
-                    
+                    bodies.push_back({ CreateBox(worldId, {mVec.x,mVec.y}, {3.0f,3.0f}, true), RandomColor() });
                 }
                 else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 					// Spawn a new body at the mouse position
