@@ -256,23 +256,19 @@ int main() {
                     case 1: bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RED }); break;
                     case 2: bodies.push_back({ CreateCup(worldId, {0.0f,0.0f}, {30.0f,30.0f}, true), RED }); break;
                 }*/
-                if (buttonId == 0) {
-                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, true), RandomColor()});
-                }
-                if (buttonId == 1) {
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {10.0f,10.0f}, true), RandomColor() });
-                }
-                if (buttonId == 2) {
-                    bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, true), RandomColor() });
-                }
-                if (buttonId == 3) {
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {20.0f,2.0f}, true), RandomColor() });
-                }
-                if (buttonId == 4) {
-                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 3.0f, true), RandomColor() });
-                }
-                if (buttonId == 5) {
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {3.0f,3.0f}, true), RandomColor() });
+                switch (buttonId) {
+                case 0:
+                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, true), RandomColor() }); break;
+                case 1:
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {10.0f,10.0f}, true), RandomColor() }); break;
+                case 2:
+                    bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, true), RandomColor() }); break;
+                case 3:
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {20.0f,2.0f}, true), RandomColor() }); break;
+                case 4:
+                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 3.0f, true), RandomColor() }); break;
+                case 5:
+                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {3.0f,3.0f}, true), RandomColor() }); break;
                 }
             }
         }
