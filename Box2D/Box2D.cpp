@@ -48,6 +48,7 @@ void InitGUIs() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
+        .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Spawn Ball",
         .id = 0,
@@ -59,6 +60,7 @@ void InitGUIs() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
+        .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Spawn Box",
         .id = 1,
@@ -70,6 +72,7 @@ void InitGUIs() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
+        .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Spawn Cup",
         .id = 2,
@@ -81,6 +84,7 @@ void InitGUIs() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
+        .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Spawn Plank",
         .id = 3,
@@ -92,6 +96,7 @@ void InitGUIs() {
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
+        .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Spawn Pellet",
         .id = 4,
@@ -103,6 +108,7 @@ void InitGUIs() {
         .height = 50,
         .fontSize = 15,
         .bgColor = GRAY,
+        .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Spawn Tiny Box",
         .id = 5,
@@ -251,10 +257,9 @@ int main() {
         if (toolMenu.active) {
             Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                int buttonId = toolMenu.getHovering(mPos); // Get ID of button clicked
+				toolMenu.deselectButtons(); // Deselect all buttons
+                int buttonId = toolMenu.click(mPos); // Get ID of button clicked
                 if (buttonId != -1) { // Button was pressed
-                    toolMenu.deselectButtons(); // Clear selected button
-                    toolMenu.selectButton(buttonId); // Select mode
                     Selection.mode = buttonId;
                 }
             }
@@ -262,7 +267,8 @@ int main() {
         if (spawnMenu.active) {
             Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                int buttonId = spawnMenu.getHovering(mPos); // Get ID of button clicked
+                spawnMenu.deselectButtons(); // Deselect all buttons
+                int buttonId = spawnMenu.click(mPos); // Get ID of button clicked
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
                 switch (buttonId) {
                 case 0:
