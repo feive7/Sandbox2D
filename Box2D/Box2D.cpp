@@ -319,8 +319,53 @@ int main() {
                 }
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
-                    b2Body_SetFixedRotation(Selection.bodyIds[0], true);
-                    DragBody(Selection.bodyIds[0], { mWorldPos.x,mWorldPos.y }, Selection.localPoints[0]);
+                    //DragBody(Selection.bodyIds[0], { mWorldPos.x,mWorldPos.y }, Selection.localPoints[0]);		
+
+                    if (IsKeyDown(KEY_A)) {
+                        // Allow rotation
+                        b2Body_SetFixedRotation(Selection.bodyIds[0], false);
+
+                        // Get current rotation
+                        b2Rot rot = b2Body_GetRotation(Selection.bodyIds[0]);
+
+                        // Rotate by a small amount per frame (negative for A key)
+                        float angleStep = -0.05f; // radians per frame
+                        b2Rot newRot = b2MulRot(rot, b2MakeRot(angleStep));
+
+                        // Get world position of the local point using new rotation
+                        b2Vec2 rotatedLocal = b2RotateVector(newRot, Selection.localPoints[0]);
+                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, rotatedLocal);
+
+                        // Apply new transform target
+                        b2Body_SetTargetTransform(Selection.bodyIds[0], { newPos, newRot }, 0.01f);
+                    }
+                    else if (IsKeyDown(KEY_D)) {
+                        // Allow rotation
+                        b2Body_SetFixedRotation(Selection.bodyIds[0], false);
+
+                        // Get current rotation
+                        b2Rot rot = b2Body_GetRotation(Selection.bodyIds[0]);
+
+                        // Rotate by a small amount per frame (negative for A key)
+                        float angleStep = 0.05f; // radians per frame
+                        b2Rot newRot = b2MulRot(rot, b2MakeRot(angleStep));
+
+                        // Get world position of the local point using new rotation
+                        b2Vec2 rotatedLocal = b2RotateVector(newRot, Selection.localPoints[0]);
+                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, rotatedLocal);
+
+                        // Apply new transform target
+                        b2Body_SetTargetTransform(Selection.bodyIds[0], { newPos, newRot }, 0.01f);
+                    }
+                    else {
+                        // Lock rotation
+                        b2Body_SetFixedRotation(Selection.bodyIds[0], true);
+
+                        // Keep body aligned to mouse without rotating
+                        b2Vec2 worldPoint = b2Body_GetWorldPoint(Selection.bodyIds[0], Selection.localPoints[0]);
+                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, b2Sub(worldPoint, b2Body_GetPosition(Selection.bodyIds[0])));
+                        b2Body_SetTargetTransform(Selection.bodyIds[0], { newPos, b2Body_GetRotation(Selection.bodyIds[0]) }, 0.01f);
+                    }
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                         BodyFreeze(Selection.bodyIds[0]); // Freeze the body
