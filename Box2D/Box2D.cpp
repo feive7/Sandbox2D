@@ -224,6 +224,8 @@ int main() {
 
     int subStepCount = 4; // Run 4 simsteps each frame
 
+    bool paused = false;
+
     while (!WindowShouldClose()) {
         // Handle inputs
         if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
@@ -246,6 +248,9 @@ int main() {
                 b2DestroyBody(bodies.back().id); // Destroy last body
                 bodies.pop_back(); // Remove last body
             }
+        }
+        if (IsKeyPressed(KEY_SPACE)) {
+            paused = !paused;
         }
 		if (IsKeyPressed(KEY_ONE)) SetMode(MODE_SELECT);
 		if (IsKeyPressed(KEY_TWO)) SetMode(MODE_WELD);
@@ -384,7 +389,7 @@ int main() {
 
         // Simulate
         float deltaTime = GetFrameTime();
-        b2World_Step(worldId, deltaTime, subStepCount);
+        if(!paused) b2World_Step(worldId, deltaTime, subStepCount);
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
