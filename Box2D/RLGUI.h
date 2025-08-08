@@ -99,5 +99,9 @@ public:
 		}
 		return -1;
 	}
-	
+	int click(Vector2 mousePosition) {
+		int buttonId = getHovering(mousePosition);
+		selectButton(buttonId); // Select the button if clicked
+		return buttonId; // Return the ID of the button clicked, or -1 if none
+	}
 };
