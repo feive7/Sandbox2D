@@ -11,6 +11,7 @@ enum Selection_mode {
     MODE_SELECT,
     MODE_WELD,
     MODE_WHEEL,
+    MODE_DRAW,
     MODE_COUNT,
 };
 
@@ -148,9 +149,21 @@ void InitGUIs() {
         .text = "Wheel Mode",
         .id = MODE_WHEEL,
         });
+    toolMenu.addButton({
+        .x = 0,
+        .y = 165,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = BLUE,
+        .fontColor = WHITE,
+        .text = "Drawing mode",
+        .id = MODE_DRAW,
+        });
     toolMenu.addLabel({
 		.x = 0,
-		.y = 165,
+        .y = 220,
 		.fontSize = 20,
 		.fontColor = BLACK,
         .text = "Left Click: Grab Body, Select\n"
@@ -266,7 +279,7 @@ int main() {
                 }
             }
         }
-        else {
+        if (!toolMenu.active) {
             Vector2 mousePos = GetMousePosition();
             spawnMenu.x = mousePos.x;
             spawnMenu.y = mousePos.y;
@@ -342,6 +355,18 @@ int main() {
                             break;
                         }
                     }
+                }
+            }
+            else if (Selection.mode == MODE_DRAW) {
+                Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
+                b2Vec2 mVec = { mPos.x,mPos.y };
+                if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+					// Pick a body to draw
+                    
+                }
+                else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+					// Spawn a new body at the mouse position
+					bodies.push_back({ CreateBall(worldId, {mVec.x,mVec.y}, 3.0f, true), RandomColor() });
                 }
             }
         }
