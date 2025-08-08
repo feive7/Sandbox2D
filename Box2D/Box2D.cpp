@@ -320,8 +320,8 @@ int main() {
                 }
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
-                    b2Body_SetMotionLocks(Selection.bodyIds[0], {false, false, true}); // Lock rotation
-                    b2Body_SetTargetTransform(Selection.bodyIds[0], {{mouseWorldPos.x,mouseWorldPos.y},b2Rot_identity}, 0.01);
+					b2Body_SetMotionLocks(Selection.bodyIds[0], { false, false, true }); // Lock the body in place
+                    DragBody(Selection.bodyIds[0], mVec, Selection.localPoints[0]);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                         BodyFreeze(Selection.bodyIds[0]); // Freeze the body
