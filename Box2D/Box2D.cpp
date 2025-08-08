@@ -307,7 +307,8 @@ int main() {
                     for (RayBody body : bodies) {
                         if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
                             Selection.bodyIds[0] = body.id;
-                            Selection.localPoints[0] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
+                            if (IsKeyDown(KEY_LEFT_CONTROL)) Selection.localPoints[0] = {0.0f,0.0f};
+                            else Selection.localPoints[0] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
                             Selection.numOfBodyIds = 1;
                             break;
                         }
