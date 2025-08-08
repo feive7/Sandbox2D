@@ -234,6 +234,7 @@ int main() {
         }
         if (IsKeyPressed(KEY_Z)) {
             // Undo
+            Selection.numOfBodyIds = 0;
             if (bodies.size() > 1) {
                 b2DestroyBody(bodies.back().id); // Destroy last body
                 bodies.pop_back(); // Remove last body
@@ -279,7 +280,7 @@ int main() {
                 }
             }
         }
-        if (!toolMenu.active) {
+        if (!toolMenu.active && !spawnMenu.active) {
             Vector2 mousePos = GetMousePosition();
             spawnMenu.x = mousePos.x;
             spawnMenu.y = mousePos.y;
@@ -305,7 +306,7 @@ int main() {
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Freeze the body
                     b2Body_SetMotionLocks(Selection.bodyIds[0], {false, false, true}); // Unfreeze the body
-                    b2Body_SetTargetTransform(Selection.bodyIds[0], {{mouseWorldPos.x,mouseWorldPos.y},b2Rot_identity}, 0.1);
+                    b2Body_SetTargetTransform(Selection.bodyIds[0], {{mouseWorldPos.x,mouseWorldPos.y},b2Rot_identity}, 0.01);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                         BodyFreeze(Selection.bodyIds[0]); // Freeze the body
