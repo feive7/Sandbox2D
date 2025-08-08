@@ -50,9 +50,6 @@ B2_API b2SensorEvents b2World_GetSensorEvents( b2WorldId worldId );
 /// Get contact events for this current time step. The event data is transient. Do not store a reference to this data.
 B2_API b2ContactEvents b2World_GetContactEvents( b2WorldId worldId );
 
-/// Get the joint events for the current time step. The event data is transient. Do not store a reference to this data.
-B2_API b2JointEvents b2World_GetJointEvents( b2WorldId worldId );
-
 /// Overlap test for all shapes that *potentially* overlap the provided AABB
 B2_API b2TreeStats b2World_OverlapAABB( b2WorldId worldId, b2AABB aabb, b2QueryFilter filter, b2OverlapResultFcn* fcn,
 										void* context );
@@ -216,8 +213,7 @@ B2_API b2BodyId b2CreateBody( b2WorldId worldId, const b2BodyDef* def );
 /// Do not keep references to the associated shapes and joints.
 B2_API void b2DestroyBody( b2BodyId bodyId );
 
-/// Body identifier validation. A valid body exists in a world and is non-null.
-/// This can be used to detect orphaned ids. Provides validation for up to 64K allocations.
+/// Body identifier validation. Can be used to detect orphaned ids. Provides validation for up to 64K allocations.
 B2_API bool b2Body_IsValid( b2BodyId id );
 
 /// Get the body type: static, kinematic, or dynamic
@@ -230,7 +226,7 @@ B2_API void b2Body_SetType( b2BodyId bodyId, b2BodyType type );
 /// Set the body name. Up to 31 characters excluding 0 termination.
 B2_API void b2Body_SetName( b2BodyId bodyId, const char* name );
 
-/// Get the body name.
+/// Get the body name. May be null.
 B2_API const char* b2Body_GetName( b2BodyId bodyId );
 
 /// Set the user data for a body
@@ -250,7 +246,7 @@ B2_API b2Transform b2Body_GetTransform( b2BodyId bodyId );
 
 /// Set the world transform of a body. This acts as a teleport and is fairly expensive.
 /// @note Generally you should create a body with then intended transform.
-/// @see b2BodyDef::position and b2BodyDef::rotation
+/// @see b2BodyDef::position and b2BodyDef::angle
 B2_API void b2Body_SetTransform( b2BodyId bodyId, b2Vec2 position, b2Rot rotation );
 
 /// Get a local point on a body given a world point
@@ -338,8 +334,8 @@ B2_API void b2Body_ApplyLinearImpulseToCenter( b2BodyId bodyId, b2Vec2 impulse, 
 /// @param bodyId The body id
 /// @param impulse the angular impulse, usually in units of kg*m*m/s
 /// @param wake also wake up the body
-/// @warning This should be used for one-shot impulses. If you need a steady torque,
-/// use a torque instead, which will work better with the sub-stepping solver.
+/// @warning This should be used for one-shot impulses. If you need a steady force,
+/// use a force instead, which will work better with the sub-stepping solver.
 B2_API void b2Body_ApplyAngularImpulse( b2BodyId bodyId, float impulse, bool wake );
 
 /// Get the mass of the body, usually in kilograms
@@ -418,11 +414,11 @@ B2_API void b2Body_Disable( b2BodyId bodyId );
 /// Enable a body by adding it to the simulation. This is expensive.
 B2_API void b2Body_Enable( b2BodyId bodyId );
 
-/// Set the motion locks on this body.
-B2_API void b2Body_SetMotionLocks( b2BodyId bodyId, b2MotionLocks locks );
+/// Set this body to have fixed rotation. This causes the mass to be reset in all cases.
+B2_API void b2Body_SetFixedRotation( b2BodyId bodyId, bool flag );
 
-/// Get the motion locks for this body.
-B2_API b2MotionLocks b2Body_GetMotionLocks( b2BodyId bodyId );
+/// Does this body have fixed rotation?
+B2_API bool b2Body_IsFixedRotation( b2BodyId bodyId );
 
 /// Set this body to be a bullet. A bullet does continuous collision detection
 /// against dynamic bodies (but not other bullets).
@@ -661,20 +657,20 @@ B2_API int b2Shape_GetContactData( b2ShapeId shapeId, b2ContactData* contactData
 /// @returns the required capacity to get all the overlaps in b2Shape_GetSensorOverlaps
 B2_API int b2Shape_GetSensorCapacity( b2ShapeId shapeId );
 
-/// Get the overlap data for a sensor shape.
+/// Get the overlapped shapes for a sensor shape.
 /// @param shapeId the id of a sensor shape
-/// @param visitorIds a user allocated array that is filled with the overlapping shapes (visitors)
+/// @param overlaps a user allocated array that is filled with the overlapping shapes
 /// @param capacity the capacity of overlappedShapes
 /// @returns the number of elements filled in the provided array
 /// @warning do not ignore the return value, it specifies the valid number of elements
 /// @warning overlaps may contain destroyed shapes so use b2Shape_IsValid to confirm each overlap
-B2_API int b2Shape_GetSensorData( b2ShapeId shapeId, b2ShapeId* visitorIds, int capacity );
+B2_API int b2Shape_GetSensorOverlaps( b2ShapeId shapeId, b2ShapeId* overlaps, int capacity );
 
 /// Get the current world AABB
 B2_API b2AABB b2Shape_GetAABB( b2ShapeId shapeId );
 
-/// Compute the mass data for a shape
-B2_API b2MassData b2Shape_ComputeMassData( b2ShapeId shapeId );
+/// Get the mass data for a shape
+B2_API b2MassData b2Shape_GetMassData( b2ShapeId shapeId );
 
 /// Get the closest point on a shape to a target point. Target and result are in world space.
 /// todo need sample
@@ -749,17 +745,29 @@ B2_API b2BodyId b2Joint_GetBodyB( b2JointId jointId );
 /// Get the world that owns this joint
 B2_API b2WorldId b2Joint_GetWorld( b2JointId jointId );
 
-/// Set the local frame on bodyA
-B2_API void b2Joint_SetLocalFrameA( b2JointId jointId, b2Transform localFrame );
+/// Set the local anchor on bodyA
+B2_API void b2Joint_SetLocalAnchorA( b2JointId jointId, b2Vec2 localAnchor );
 
-/// Get the local frame on bodyA
-B2_API b2Transform b2Joint_GetLocalFrameA( b2JointId jointId );
+/// Get the local anchor on bodyA
+B2_API b2Vec2 b2Joint_GetLocalAnchorA( b2JointId jointId );
 
-/// Set the local frame on bodyB
-B2_API void b2Joint_SetLocalFrameB( b2JointId jointId, b2Transform localFrame );
+/// Set the local anchor on bodyB
+B2_API void b2Joint_SetLocalAnchorB( b2JointId jointId, b2Vec2 localAnchor );
 
-/// Get the local frame on bodyB
-B2_API b2Transform b2Joint_GetLocalFrameB( b2JointId jointId );
+/// Get the local anchor on bodyB
+B2_API b2Vec2 b2Joint_GetLocalAnchorB( b2JointId jointId );
+
+/// Get the joint reference angle in radians (revolute, prismatic, and weld)
+B2_API float b2Joint_GetReferenceAngle( b2JointId jointId );
+
+/// Set the joint reference angle in radians, must be in [-pi,pi]. (revolute, prismatic, and weld)
+B2_API void b2Joint_SetReferenceAngle( b2JointId jointId, float angleInRadians );
+
+/// Set the local axis on bodyA (prismatic and wheel)
+B2_API void b2Joint_SetLocalAxisA( b2JointId jointId, b2Vec2 localAxis );
+
+/// Get the local axis on bodyA (prismatic and wheel)
+B2_API b2Vec2 b2Joint_GetLocalAxisA( b2JointId jointId );
 
 /// Toggle collision between connected bodies
 B2_API void b2Joint_SetCollideConnected( b2JointId jointId, bool shouldCollide );
@@ -788,27 +796,14 @@ B2_API float b2Joint_GetLinearSeparation( b2JointId jointId );
 /// Get the current angular separation error for this joint. Does not consider admissible movement. Usually in meters.
 B2_API float b2Joint_GetAngularSeparation( b2JointId jointId );
 
+/// Get the joint constraint tuning. Advanced feature.
+B2_API void b2Joint_GetConstraintTuning( b2JointId jointId, float* hertz, float* dampingRatio );
+
 /// Set the joint constraint tuning. Advanced feature.
 /// @param jointId the joint
 /// @param hertz the stiffness in Hertz (cycles per second)
 /// @param dampingRatio the non-dimensional damping ratio (one for critical damping)
 B2_API void b2Joint_SetConstraintTuning( b2JointId jointId, float hertz, float dampingRatio );
-
-/// Get the joint constraint tuning. Advanced feature.
-B2_API void b2Joint_GetConstraintTuning( b2JointId jointId, float* hertz, float* dampingRatio );
-
-/// Set the force threshold for joint events (Newtons)
-B2_API void b2Joint_SetForceThreshold( b2JointId jointId, float threshold );
-
-/// Get the force threshold for joint events (Newtons)
-B2_API float b2Joint_GetForceThreshold( b2JointId jointId );
-
-/// Set the torque threshold for joint events (N-m)
-B2_API void b2Joint_SetTorqueThreshold( b2JointId jointId, float threshold );
-
-/// Get the torque threshold for joint events (N-m)
-B2_API float b2Joint_GetTorqueThreshold( b2JointId jointId );
-
 
 /**
  * @defgroup distance_joint Distance Joint
@@ -833,15 +828,6 @@ B2_API void b2DistanceJoint_EnableSpring( b2JointId jointId, bool enableSpring )
 
 /// Is the distance joint spring enabled?
 B2_API bool b2DistanceJoint_IsSpringEnabled( b2JointId jointId );
-
-/// Set the force range for the spring.
-B2_API void b2DistanceJoint_SetSpringForceRange( b2JointId jointId, float lowerForce, float upperForce );
-
-/// Get the force range for the spring.
-B2_API void b2DistanceJoint_GetSpringForceRange( b2JointId jointId, float* lowerForce, float* upperForce );
-
-/// The the spring resist compression?
-B2_API bool b2DistanceJoint_IsCompressionEnabled( b2JointId jointId );
 
 /// Set the spring stiffness in Hertz
 B2_API void b2DistanceJoint_SetSpringHertz( b2JointId jointId, float hertz );
@@ -901,8 +887,9 @@ B2_API float b2DistanceJoint_GetMotorForce( b2JointId jointId );
  * @defgroup motor_joint Motor Joint
  * @brief Functions for the motor joint.
  *
- * The motor joint is used to drive the relative transform between two bodies. The target
- * is set by updating the local frames using b2Joint_SetLocalFrameA or b2Joint_SetLocalFrameB.
+ * The motor joint is used to drive the relative transform between two bodies. It takes
+ * a relative position and rotation and applies the forces and torques needed to achieve
+ * that relative transform over time.
  * @{
  */
 
@@ -910,65 +897,36 @@ B2_API float b2DistanceJoint_GetMotorForce( b2JointId jointId );
 /// @see b2MotorJointDef for details
 B2_API b2JointId b2CreateMotorJoint( b2WorldId worldId, const b2MotorJointDef* def );
 
-/// Set the desired relative linear velocity in meters per second
-B2_API void b2MotorJoint_SetLinearVelocity( b2JointId jointId, b2Vec2 velocity );
+/// Set the motor joint linear offset target
+B2_API void b2MotorJoint_SetLinearOffset( b2JointId jointId, b2Vec2 linearOffset );
 
-/// Get the desired relative linear velocity in meters per second
-B2_API b2Vec2 b2MotorJoint_GetLinearVelocity( b2JointId jointId );
+/// Get the motor joint linear offset target
+B2_API b2Vec2 b2MotorJoint_GetLinearOffset( b2JointId jointId );
 
-/// Set the desired relative angular velocity in radians per second
-B2_API void b2MotorJoint_SetAngularVelocity( b2JointId jointId, float velocity );
+/// Set the motor joint angular offset target in radians. This angle will be unwound
+/// so the motor will drive along the shortest arc.
+B2_API void b2MotorJoint_SetAngularOffset( b2JointId jointId, float angularOffset );
 
-/// Get the desired relative angular velocity in radians per second
-B2_API float b2MotorJoint_GetAngularVelocity( b2JointId jointId );
+/// Get the motor joint angular offset target in radians
+B2_API float b2MotorJoint_GetAngularOffset( b2JointId jointId );
 
 /// Set the motor joint maximum force, usually in newtons
-B2_API void b2MotorJoint_SetMaxVelocityForce( b2JointId jointId, float maxForce );
+B2_API void b2MotorJoint_SetMaxForce( b2JointId jointId, float maxForce );
 
 /// Get the motor joint maximum force, usually in newtons
-B2_API float b2MotorJoint_GetMaxVelocityForce( b2JointId jointId );
+B2_API float b2MotorJoint_GetMaxForce( b2JointId jointId );
 
 /// Set the motor joint maximum torque, usually in newton-meters
-B2_API void b2MotorJoint_SetMaxVelocityTorque( b2JointId jointId, float maxTorque );
+B2_API void b2MotorJoint_SetMaxTorque( b2JointId jointId, float maxTorque );
 
 /// Get the motor joint maximum torque, usually in newton-meters
-B2_API float b2MotorJoint_GetMaxVelocityTorque( b2JointId jointId );
+B2_API float b2MotorJoint_GetMaxTorque( b2JointId jointId );
 
-/// Set the spring linear hertz stiffness
-B2_API void b2MotorJoint_SetLinearHertz( b2JointId jointId, float hertz );
+/// Set the motor joint correction factor, usually in [0, 1]
+B2_API void b2MotorJoint_SetCorrectionFactor( b2JointId jointId, float correctionFactor );
 
-/// Get the spring linear hertz stiffness
-B2_API float b2MotorJoint_GetLinearHertz( b2JointId jointId );
-
-/// Set the spring linear damping ratio. Use 1.0 for critical damping.
-B2_API void b2MotorJoint_SetLinearDampingRatio( b2JointId jointId, float damping );
-
-/// Get the spring linear damping ratio.
-B2_API float b2MotorJoint_GetLinearDampingRatio( b2JointId jointId );
-
-/// Set the spring angular hertz stiffness
-B2_API void b2MotorJoint_SetAngularHertz( b2JointId jointId, float hertz );
-
-/// Get the spring angular hertz stiffness
-B2_API float b2MotorJoint_GetAngularHertz( b2JointId jointId );
-
-/// Set the spring angular damping ratio. Use 1.0 for critical damping.
-B2_API void b2MotorJoint_SetAngularDampingRatio( b2JointId jointId, float damping );
-
-/// Get the spring angular damping ratio.
-B2_API float b2MotorJoint_GetAngularDampingRatio( b2JointId jointId );
-
-/// Set the maximum spring force in newtons.
-B2_API void b2MotorJoint_SetMaxSpringForce( b2JointId jointId, float maxForce );
-
-/// Get the maximum spring force in newtons.
-B2_API float b2MotorJoint_GetMaxSpringForce( b2JointId jointId );
-
-/// Set the maximum spring torque in newtons * meters
-B2_API void b2MotorJoint_SetMaxSpringTorque( b2JointId jointId, float maxTorque );
-
-/// Get the maximum spring torque in newtons * meters
-B2_API float b2MotorJoint_GetMaxSpringTorque( b2JointId jointId );
+/// Get the motor joint correction factor, usually in [0, 1]
+B2_API float b2MotorJoint_GetCorrectionFactor( b2JointId jointId );
 
 /**@}*/
 
@@ -984,6 +942,12 @@ B2_API float b2MotorJoint_GetMaxSpringTorque( b2JointId jointId );
 /// Create a mouse joint
 /// @see b2MouseJointDef for details
 B2_API b2JointId b2CreateMouseJoint( b2WorldId worldId, const b2MouseJointDef* def );
+
+/// Set the mouse joint target
+B2_API void b2MouseJoint_SetTarget( b2JointId jointId, b2Vec2 target );
+
+/// Get the mouse joint target
+B2_API b2Vec2 b2MouseJoint_GetTarget( b2JointId jointId );
 
 /// Set the mouse joint spring stiffness in Hertz
 B2_API void b2MouseJoint_SetSpringHertz( b2JointId jointId, float hertz );
@@ -1293,19 +1257,5 @@ B2_API float b2WheelJoint_GetMaxMotorTorque( b2JointId jointId );
 B2_API float b2WheelJoint_GetMotorTorque( b2JointId jointId );
 
 /**@}*/
-
-/**@}*/
-
-/**
- * @defgroup contact Contact
- * Access to contacts
- * @{
- */
-
-/// Contact identifier validation. Provides validation for up to 2^32 allocations.
-B2_API bool b2Contact_IsValid( b2ContactId id );
-
-/// Get the data for a contact. The manifold may have no points if the contact is not touching.
-B2_API b2ContactData b2Contact_GetData( b2ContactId contactId );
 
 /**@}*/

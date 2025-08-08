@@ -98,12 +98,12 @@ b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, b2Body
 // Constraints & Joints
 void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, float length, bool collideConnected, float dampingRatio, bool enableLimit, bool enableMotor, bool enableSpring, float hertz, b2Vec2 localAnchorA, b2Vec2 localAnchorB, float maxLength, float maxMotorForce, float minLength, float motorSpeed) {
 	b2DistanceJointDef jointDef = b2DefaultDistanceJointDef(); // Create joint definition
-	jointDef.base.bodyIdA = bodyA; // Set first body
-	jointDef.base.bodyIdB = bodyB; // Set second body
+	jointDef.bodyIdA = bodyA; // Set first body
+	jointDef.bodyIdB = bodyB; // Set second body
 	jointDef.length = length; // Set length
-	jointDef.base.localFrameA.p = localAnchorA; // Set first local frame
-	jointDef.base.localFrameB.p = localAnchorB; // Set second local frame
-	jointDef.base.collideConnected = collideConnected; // Set collision flag
+	jointDef.localAnchorA = localAnchorA; // Set first local frame
+	jointDef.localAnchorB = localAnchorB; // Set second local frame
+	jointDef.collideConnected = collideConnected; // Set collision flag
 	jointDef.dampingRatio = dampingRatio; // Set damping ratio
 	jointDef.enableLimit = enableLimit; // Enable limit
 	jointDef.enableMotor = enableMotor; // Enable motor
@@ -136,8 +136,8 @@ void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, floa
 }
 void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, float length) {
     b2DistanceJointDef jointDef = b2DefaultDistanceJointDef(); // Create joint definition
-    jointDef.base.bodyIdA = bodyA; // Set first body
-    jointDef.base.bodyIdB = bodyB; // Set second body
+    jointDef.bodyIdA = bodyA; // Set first body
+    jointDef.bodyIdB = bodyB; // Set second body
     jointDef.length = length; // Set length
     b2CreateDistanceJoint(id, &jointDef); // Create the joint
 }
@@ -146,12 +146,10 @@ void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB) {
 }
 void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2Vec2 anchorB) {
     b2WeldJointDef jointDef = b2DefaultWeldJointDef(); // Create joint definition
-    jointDef.base.bodyIdA = bodyA; // Set first body
-    jointDef.base.bodyIdB = bodyB; // Set second body
-    jointDef.base.localFrameA.p = anchorA; // Set first local frame
-    jointDef.base.localFrameA.q = b2Body_GetRotation(bodyB); // Set first local frame
-    jointDef.base.localFrameB.p = anchorB; // Set second local frame
-    jointDef.base.localFrameB.q = b2Body_GetRotation(bodyA); // Set first local frame
+    jointDef.bodyIdA = bodyA; // Set first body
+    jointDef.bodyIdB = bodyB; // Set second body
+    jointDef.localAnchorA = anchorA; // Set first local frame
+    jointDef.localAnchorB = anchorB; // Set second local frame
     b2JointId jointId = b2CreateWeldJoint(id, &jointDef); // Create the joint
 
     b2Joint_WakeBodies(jointId);
@@ -161,10 +159,9 @@ void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2
 }
 void WheelBodies(b2WorldId id, b2BodyId bodyBody, b2BodyId wheelBody, b2Vec2 anchor) {
     b2WheelJointDef jointDef = b2DefaultWheelJointDef(); // Create joint definition
-    jointDef.base.bodyIdA = bodyBody; // Set first body
-    jointDef.base.bodyIdB = wheelBody; // Set second body
-    jointDef.base.localFrameA.p = anchor; // Set first local frame
-    jointDef.base.localFrameB.p = {0.0f,0.0f}; // Set second local frame
+    jointDef.bodyIdA = bodyBody; // Set first body
+    jointDef.bodyIdB = wheelBody; // Set second body
+    jointDef.localAnchorA = anchor; // Set first local frame
     jointDef.hertz = 10.0f;
     jointDef.enableMotor = true; // Enable motor for wheel
     jointDef.maxMotorTorque = 1000.0f; // Set max motor torque
@@ -172,18 +169,18 @@ void WheelBodies(b2WorldId id, b2BodyId bodyBody, b2BodyId wheelBody, b2Vec2 anc
 }
 void RevoluteJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
     b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef(); // Create joint definition
-    jointDef.base.bodyIdA = bodyA; // Set first body
-    jointDef.base.bodyIdB = bodyB; // Set second body
-    jointDef.base.localFrameA.p = anchor; // Set first local frame
-    jointDef.base.localFrameB.p = anchor; // Set second local frame
+    jointDef.bodyIdA = bodyA; // Set first body
+    jointDef.bodyIdB = bodyB; // Set second body
+    jointDef.localAnchorA = anchor; // Set first local frame
+    jointDef.localAnchorB = anchor; // Set second local frame
     b2CreateRevoluteJoint(id, &jointDef); // Create the joint
 }
 void MouseJointBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchor) {
     b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef(); // Create joint definition
-    jointDef.base.bodyIdA = bodyA; // Set first body
-    jointDef.base.bodyIdB = bodyB; // Set second body
-    jointDef.base.localFrameA.p = anchor; // Set first local frame
-    jointDef.base.localFrameB.p = anchor; // Set second local frame
+    jointDef.bodyIdA = bodyA; // Set first body
+    jointDef.bodyIdB = bodyB; // Set second body
+    jointDef.localAnchorA = anchor; // Set first local frame
+    jointDef.localAnchorB = anchor; // Set second local frame
     jointDef.enableMotor = true; // Enable motor for dragging
     jointDef.maxMotorTorque = 1000.0f; // Set max motor torque
     b2CreateRevoluteJoint(id, &jointDef); // Create the joint

@@ -53,14 +53,14 @@ void DrawJoint(b2WorldId world, b2JointId joint) {
     b2Transform bodyATransform = b2Body_GetTransform(bodyA);
     b2Transform bodyBTransform = b2Body_GetTransform(bodyB);
 
-    b2Transform localFrameA = b2Joint_GetLocalFrameA(joint);
-    b2Transform localFrameB = b2Joint_GetLocalFrameB(joint);
+    b2Vec2 localFrameA = b2Joint_GetLocalAnchorA(joint);
+    b2Vec2 localFrameB = b2Joint_GetLocalAnchorB(joint);
 
     // Combine localFrameA with bodyA's transform to get world anchor A
-    b2Vec2 anchorA = b2TransformPoint(bodyATransform, localFrameA.p);
+    b2Vec2 anchorA = b2TransformPoint(bodyATransform, localFrameA);
 
     // Combine localFrameB with bodyB's transform to get world anchor B
-    b2Vec2 anchorB = b2TransformPoint(bodyBTransform, localFrameB.p);
+    b2Vec2 anchorB = b2TransformPoint(bodyBTransform, localFrameB);
 
     DrawLine(anchorA.x, anchorA.y, anchorB.x, anchorB.y, BLACK);
 }

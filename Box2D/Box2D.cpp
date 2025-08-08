@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <box2d/box2d.h>
+#include <box2d.h>
 #include <raylib.h>
 #include <rlgl.h>
 #include <RLGUI.h>
@@ -314,12 +314,12 @@ int main() {
                     }
                 }
                 else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                    b2Body_SetMotionLocks(Selection.bodyIds[0], { false, false, false });
+                    b2Body_SetFixedRotation(Selection.bodyIds[0], false);
                     Selection.numOfBodyIds = 0;
                 }
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
-					b2Body_SetMotionLocks(Selection.bodyIds[0], { false, false, true }); // Lock the body in place
+                    b2Body_SetFixedRotation(Selection.bodyIds[0], true);
                     DragBody(Selection.bodyIds[0], { mWorldPos.x,mWorldPos.y }, Selection.localPoints[0]);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
