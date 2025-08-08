@@ -20,7 +20,6 @@ GUI toolMenu;
 
 struct {
     int mode = MODE_SELECT;
-    bool active;
     b2BodyId bodyIds[10];
     int numOfBodyIds;
     b2Vec2 localPoints[10];
@@ -251,11 +250,6 @@ int main() {
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 int buttonId = spawnMenu.getHovering(mPos); // Get ID of button clicked
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
-                /*switch (buttonId) {
-                    case 0: bodies.push_back({ CreateBall(worldId, {0.0f,0.0f}, 10.0f, true), RED }); break;
-                    case 1: bodies.push_back({ CreateBox(worldId, {0.0f,0.0f}, {10.0f,10.0f}, true), RED }); break;
-                    case 2: bodies.push_back({ CreateCup(worldId, {0.0f,0.0f}, {30.0f,30.0f}, true), RED }); break;
-                }*/
                 switch (buttonId) {
                 case 0:
                     bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, true), RandomColor() }); break;
@@ -359,8 +353,6 @@ int main() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         BeginMode2D(viewport);
-        /*DrawLine(0, 3, 0, -3, GRAY);
-        DrawLine(3, 0, -3, 0, GRAY);*/
 
         for (RayBody& body : bodies) {
             body.draw();
@@ -375,8 +367,7 @@ int main() {
             if (b2Body_IsValid(Selection.bodyIds[0])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[0]));
             if (b2Body_IsValid(Selection.bodyIds[1])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[1]));
         }
-        //DrawAABB(b2Body_ComputeAABB(Selection.bodyId));
-        
+
         EndMode2D();
         if (OTCD) {
             const char* text = "Hold C to open tool menu";
