@@ -248,3 +248,20 @@ b2AABB b2Body_ComputeAABBEx(b2BodyId bodyId) {
     }
     return aabb; // Return the computed AABB
 }
+void BodySetTargetRotation(b2BodyId bodyId, b2Rot newRot, b2Vec2 localPoint, b2Vec2 pivotPoint) {
+    // Get world position of the local point using new rotation
+    b2Vec2 rotatedLocal = b2RotateVector(newRot, localPoint);
+    b2Vec2 newPos = b2Sub(pivotPoint, rotatedLocal);
+
+    // Apply new transform target
+    b2Body_SetTargetTransform(bodyId, { newPos, newRot }, 0.01f);
+}
+void BodyRotate(b2BodyId bodyId, float angleDelta, b2Vec2 localPoint, b2Vec2 pivotPoint) {
+    // Get current rotation
+    b2Rot rot = b2Body_GetRotation(bodyId);
+
+    // Rotate by a small amount per frame (negative for A key)
+    float angleStep = angleDelta; // radians per frame
+    b2Rot newRot = b2MulRot(rot, b2MakeRot(angleStep));
+    BodySetTargetRotation(bodyId, newRot, localPoint, pivotPoint);
+}

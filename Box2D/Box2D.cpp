@@ -324,38 +324,12 @@ int main() {
                     if (IsKeyDown(KEY_A)) {
                         // Allow rotation
                         b2Body_SetFixedRotation(Selection.bodyIds[0], false);
-
-                        // Get current rotation
-                        b2Rot rot = b2Body_GetRotation(Selection.bodyIds[0]);
-
-                        // Rotate by a small amount per frame (negative for A key)
-                        float angleStep = -0.05f; // radians per frame
-                        b2Rot newRot = b2MulRot(rot, b2MakeRot(angleStep));
-
-                        // Get world position of the local point using new rotation
-                        b2Vec2 rotatedLocal = b2RotateVector(newRot, Selection.localPoints[0]);
-                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, rotatedLocal);
-
-                        // Apply new transform target
-                        b2Body_SetTargetTransform(Selection.bodyIds[0], { newPos, newRot }, 0.01f);
+                        BodyRotate(Selection.bodyIds[0], -0.05f, Selection.localPoints[0], {mWorldPos.x,mWorldPos.y});
                     }
                     else if (IsKeyDown(KEY_D)) {
                         // Allow rotation
                         b2Body_SetFixedRotation(Selection.bodyIds[0], false);
-
-                        // Get current rotation
-                        b2Rot rot = b2Body_GetRotation(Selection.bodyIds[0]);
-
-                        // Rotate by a small amount per frame (negative for A key)
-                        float angleStep = 0.05f; // radians per frame
-                        b2Rot newRot = b2MulRot(rot, b2MakeRot(angleStep));
-
-                        // Get world position of the local point using new rotation
-                        b2Vec2 rotatedLocal = b2RotateVector(newRot, Selection.localPoints[0]);
-                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, rotatedLocal);
-
-                        // Apply new transform target
-                        b2Body_SetTargetTransform(Selection.bodyIds[0], { newPos, newRot }, 0.01f);
+                        BodyRotate(Selection.bodyIds[0], 0.05f, Selection.localPoints[0], { mWorldPos.x,mWorldPos.y });
                     }
                     else {
                         // Lock rotation
