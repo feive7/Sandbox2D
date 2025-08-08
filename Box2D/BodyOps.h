@@ -152,7 +152,9 @@ void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2
     jointDef.base.localFrameA.q = b2Body_GetRotation(bodyB); // Set first local frame
     jointDef.base.localFrameB.p = anchorB; // Set second local frame
     jointDef.base.localFrameB.q = b2Body_GetRotation(bodyA); // Set first local frame
-    b2CreateWeldJoint(id, &jointDef); // Create the joint
+    b2JointId jointId = b2CreateWeldJoint(id, &jointDef); // Create the joint
+
+    b2Joint_WakeBodies(jointId);
 
     // Unfreeze body that is being welded
     b2Body_SetType(bodyA, b2_dynamicBody);
