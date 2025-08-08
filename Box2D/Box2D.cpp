@@ -377,11 +377,11 @@ int main() {
                 Vector2 mPos = GetScreenToWorld2D(GetMousePosition(), viewport);
                 b2Vec2 mVec = { mPos.x,mPos.y };
                 if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-					// Pick a body to draw
+                    // Spawn a new box at the mouse position
                     bodies.push_back({ CreateBox(worldId, {mVec.x,mVec.y}, {3.0f,3.0f}, true), RandomColor() });
                 }
                 else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-					// Spawn a new body at the mouse position
+					// Spawn a new ball at the mouse position
 					bodies.push_back({ CreateBall(worldId, {mVec.x,mVec.y}, 3.0f, true), RandomColor() });
                 }
             }
