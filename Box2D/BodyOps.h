@@ -1,8 +1,8 @@
 // Basic creation
-b2BodyId CreateBox(b2WorldId worldId, b2Vec2 position, b2Vec2 extent, bool dynamic) {
+b2BodyId CreateBox(b2WorldId worldId, b2Vec2 position, b2Vec2 extent, b2BodyType bodyType) {
     b2BodyDef boxBodyDef = b2DefaultBodyDef(); // Create body
     boxBodyDef.position = position; // Set position
-    if (dynamic) boxBodyDef.type = b2_dynamicBody;
+    boxBodyDef.type = bodyType;
     b2BodyId boxBodyId = b2CreateBody(worldId, &boxBodyDef);
 
     b2Polygon box = b2MakeBox(extent.x, extent.y); // Create box polygon
@@ -13,10 +13,10 @@ b2BodyId CreateBox(b2WorldId worldId, b2Vec2 position, b2Vec2 extent, bool dynam
 
     return boxBodyId; // Return the id
 }
-b2BodyId CreateBall(b2WorldId worldId, b2Vec2 center, float radius, bool dynamic) {
+b2BodyId CreateBall(b2WorldId worldId, b2Vec2 center, float radius, b2BodyType bodyType) {
     b2BodyDef ballBodyDef = b2DefaultBodyDef(); // Create body
     ballBodyDef.position = center; // Set position
-    if (dynamic) ballBodyDef.type = b2_dynamicBody;
+    ballBodyDef.type = bodyType;
     b2BodyId ballBodyId = b2CreateBody(worldId, &ballBodyDef);
 
     b2Circle ball;
@@ -30,11 +30,11 @@ b2BodyId CreateBall(b2WorldId worldId, b2Vec2 center, float radius, bool dynamic
 
     return ballBodyId; // Return the id
 }
-b2BodyId CreateCup(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool dynamic) {
+b2BodyId CreateCup(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, b2BodyType bodyType) {
     // Create body
     b2BodyDef cupBodyDef = b2DefaultBodyDef();
     cupBodyDef.position = center;
-    if (dynamic) cupBodyDef.type = b2_dynamicBody;
+    cupBodyDef.type = bodyType;
     b2BodyId cupBodyId = b2CreateBody(worldId, &cupBodyDef);
 
     // Create bottom wall shape
@@ -59,11 +59,11 @@ b2BodyId CreateCup(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool dynamic
 
     return cupBodyId;
 }
-b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, bool dynamic) {
+b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, b2BodyType bodyType) {
     // Create body
     b2BodyDef hollowBoxBodyDef = b2DefaultBodyDef();
     hollowBoxBodyDef.position = center;
-    if (dynamic) hollowBoxBodyDef.type = b2_dynamicBody;
+    hollowBoxBodyDef.type = bodyType;
     b2BodyId hollowBoxBodyId = b2CreateBody(worldId, &hollowBoxBodyDef);
 
     // Create bottom wall shape
