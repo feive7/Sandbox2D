@@ -127,7 +127,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Drag Mode",
+        .text = "Drag Mode (1)",
         .id = MODE_SELECT,
         .selected = true,
         });
@@ -140,7 +140,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Weld Mode",
+        .text = "Weld Mode (2)",
         .id = MODE_WELD,
         });
     toolMenu.addButton({
@@ -152,7 +152,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Wheel Mode",
+        .text = "Wheel Mode (3)",
         .id = MODE_WHEEL,
         });
     toolMenu.addButton({
@@ -164,7 +164,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Drawing mode",
+        .text = "Drawing Mode (4)",
         .id = MODE_DRAW,
         });
     toolMenu.addLabel({
