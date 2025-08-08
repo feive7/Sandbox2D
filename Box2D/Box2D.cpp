@@ -232,7 +232,8 @@ int main() {
             viewport.offset.y += mDelta.y;
         }
         if (IsKeyPressed(KEY_R)) {
-			ResetScene(worldId, bodies); // Reset scene
+            Selection.numOfBodyIds = 0;
+            ResetScene(worldId, bodies); // Reset scene
             viewport.offset = { 400.0f, 400.0f };
             viewport.rotation = 180;
             viewport.target = { 0.0f,0.0f };
@@ -257,10 +258,9 @@ int main() {
         if (toolMenu.active) {
             Vector2 mPos = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-				toolMenu.deselectButtons(); // Deselect all buttons
                 int buttonId = toolMenu.click(mPos); // Get ID of button clicked
                 if (buttonId != -1) { // Button was pressed
-                    Selection.mode = buttonId;
+					SetMode(buttonId); // Set the mode based on button ID
                 }
             }
         }
