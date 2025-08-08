@@ -58,7 +58,7 @@ public:
 			Color bgColor = (btn.selected ? btn.bgColorSelected : btn.bgColor);
 			DrawRectangle(padding + gui.x + btn.x, padding + gui.y + btn.y, btn.width, btn.height, ColorBrightness(bgColor, -0.2));
 			DrawRectangle(padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, btn.width - 4, btn.height - 4, bgColor);
-			DrawText(TextFormat("ID: %i", btn.id), padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, 10, btn.fontColor);
+			//DrawText(TextFormat("ID: %i", btn.id), padding + gui.x + btn.x + 2, padding + gui.y + btn.y + 2, 10, btn.fontColor);
 			DrawText(btn.text.c_str(), padding + gui.x + btn.x + (btn.width - textLength) / 2, padding + gui.y + btn.y + (btn.height - 20) / 2, btn.fontSize, btn.fontColor);
 		}
 		for (Label lbl : labels) {
