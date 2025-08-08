@@ -394,9 +394,6 @@ int main() {
             body.draw();
             b2JointId jointArray[3];
             b2Body_GetJoints(body.id, jointArray, 3);
-            for (int i = 0; i < b2Body_GetJointCount(body.id); i++) {
-                DrawJoint(worldId, jointArray[i]);
-            }
         }
         
         if (Selection.mode == MODE_WELD && Selection.numOfBodyIds) {
