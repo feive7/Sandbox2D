@@ -145,17 +145,31 @@ void HingeBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB) {
     HingeBodies(id, bodyA, bodyB, b2Distance(b2Body_GetPosition(bodyA), b2Body_GetPosition(bodyB)));
 }
 void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB, b2Vec2 anchorA, b2Vec2 anchorB) {
+    b2Rot rotA = b2Body_GetRotation(bodyA);
+    b2Rot rotB = b2Body_GetRotation(bodyB);
+    float angleA = b2Rot_GetAngle(rotA);
+    float angleB = b2Rot_GetAngle(rotB);
+
     b2WeldJointDef jointDef = b2DefaultWeldJointDef(); // Create joint definition
     jointDef.bodyIdA = bodyA; // Set first body
     jointDef.bodyIdB = bodyB; // Set second body
     jointDef.localAnchorA = anchorA; // Set first local frame
     jointDef.localAnchorB = anchorB; // Set second local frame
+    jointDef.referenceAngle = angleB - angleA;
     b2JointId jointId = b2CreateWeldJoint(id, &jointDef); // Create the joint
 
     b2Joint_WakeBodies(jointId);
 
     // Unfreeze body that is being welded
     b2Body_SetType(bodyA, b2_dynamicBody);
+}
+void WeldBodies(b2WorldId id, b2BodyId bodyA, b2BodyId bodyB) {
+    b2Vec2 posA = b2Body_GetPosition(bodyA);
+    b2Vec2 posB = b2Body_GetPosition(bodyB);
+    b2Vec2 midpoint = b2MulSV(.5,b2Add(posA,posB));
+    b2Vec2 localA = b2Body_GetLocalPoint(bodyA, midpoint);
+    b2Vec2 localB = b2Body_GetLocalPoint(bodyB, midpoint);
+    WeldBodies(id, bodyA, bodyB, localA, localB);
 }
 void WheelBodies(b2WorldId id, b2BodyId bodyBody, b2BodyId wheelBody, b2Vec2 anchor) {
     b2WheelJointDef jointDef = b2DefaultWheelJointDef(); // Create joint definition
