@@ -230,10 +230,10 @@ int main() {
         // Get inputs
         Vector2 mPos = GetMousePosition();
 		Vector2 mWorldPos = GetScreenToWorld2D(mPos, viewport);
+        Vector2 mDelta = GetMouseDelta();
 
         // Handle inputs
         if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-            Vector2 mDelta = GetMouseDelta();
             viewport.offset.x += mDelta.x;
             viewport.offset.y += mDelta.y;
         }
@@ -245,7 +245,7 @@ int main() {
             viewport.target = { 0.0f,0.0f };
             viewport.zoom = 3.0f;
         }
-        if (IsKeyPressed(KEY_Z)) {
+        if (IsKeyPressed(KEY_Z) || IsKeyPressedRepeat(KEY_Z)) {
             // Undo
             Selection.numOfBodyIds = 0;
             if (bodies.size() > 1) {
@@ -366,7 +366,8 @@ int main() {
                 }
                 if (Selection.numOfBodyIds == 2) {
                     if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
-                        WeldBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1], Selection.localPoints[0], Selection.localPoints[1]);
+                        //WeldBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1], Selection.localPoints[0], Selection.localPoints[1]);
+                        WeldBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
                         printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
                     }
                     else {
