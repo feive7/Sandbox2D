@@ -16,7 +16,7 @@ void DrawBody(b2BodyId id, Color color) {
         case b2_polygonShape: {
             b2Polygon poly = b2Shape_GetPolygon(shape); // Polygon
             b2Vec2 centroid = poly.centroid;
-			b2Vec2 rotOffset = b2RotateVector(bodyRotation, centroid); // Rotate centroid by body rotation
+            b2Vec2 rotOffset = b2RotateVector(bodyRotation, centroid); // Rotate centroid by body rotation
 
             // Get Transformation
             b2Transform transformation = b2Body_GetTransform(id);
@@ -48,6 +48,13 @@ void DrawBody(b2BodyId id, Color color) {
             DrawCircleV({ bodyCenter.x, bodyCenter.y }, circle.radius, ColorBrightness(color, -0.2f)); // Draw circle border
             DrawCircleV({ bodyCenter.x, bodyCenter.y }, circle.radius - 1, color); // Draw inner circle
             DrawLineEx({ bodyCenter.x, bodyCenter.y }, { edge.x, edge.y }, 1.0f, ColorBrightness(color, -0.2f)); // Draw line from center to edge to show rotation
+            break;
+        }
+        case b2_segmentShape: {
+            b2Segment segment = b2Shape_GetSegment(shape);
+            b2Vec2 v1 = b2TransformPoint(bodyTransform, segment.point1); // Rotate vertex by body rotation
+            b2Vec2 v2 = b2TransformPoint(bodyTransform, segment.point2); // Rotate vertex by body rotation
+            DrawLineEx({ v1.x, v1.y }, { v2.x, v2.y }, 1.0f, ColorBrightness(color, -0.2f)); // Draw segment
             break;
         }
         }
@@ -91,6 +98,22 @@ void DrawBodySolid(b2BodyId id, Color color) {
                 rlVertex2f(edge.x, edge.y); // Edge of the circle
                 rlVertex2f(v2.x + bodyCenter.x, v2.y + bodyCenter.y); // Next vertex of the circle segment
 			}
+            break;
+        }
+        case b2_segmentShape: {
+            b2Segment segment = b2Shape_GetSegment(shape);
+            b2Vec2 v1 = b2TransformPoint(bodyTransform, segment.point1); // Rotate vertex by body rotation
+            b2Vec2 v2 = b2TransformPoint(bodyTransform, segment.point2); // Rotate vertex by body rotation
+            
+			b2Vec2 perpendicular = b2MulSV(1.0f,b2Normalize({ -(v2.y - v1.y), v2.x - v1.x })); // Perpendicular vector to the segment
+
+			rlVertex2f(v1.x + perpendicular.x, v1.y + perpendicular.y); // Vertex of the segment
+            rlVertex2f(v2.x + perpendicular.x, v2.y + perpendicular.y); // End of the segment
+            rlVertex2f(v1.x - perpendicular.x, v1.y - perpendicular.y); // Start of the segment
+
+            rlVertex2f(v1.x - perpendicular.x, v1.y - perpendicular.y); // Vertex of the segment
+            rlVertex2f(v2.x + perpendicular.x, v2.y + perpendicular.y); // End of the segment
+            rlVertex2f(v2.x - perpendicular.x, v2.y - perpendicular.y); // Start of the segment
             break;
         }
         }
