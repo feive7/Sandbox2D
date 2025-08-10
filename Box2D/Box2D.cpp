@@ -361,7 +361,7 @@ int main() {
     // Window Definition
     const int screenWidth = 800;
     const int screenHeight = 800;
-    InitWindow(screenWidth, screenHeight, "Box2D");
+    InitWindow(screenWidth, screenHeight, "Sandbox2D v1.3.0");
     SetTargetFPS(60);
 
     // Viewport Definition
