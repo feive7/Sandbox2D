@@ -145,18 +145,6 @@ void InitGUIs() {
         .text = "Pentagon",
         .id = 6,
         });
-    spawnMenu.addButton({
-		.x = 510,
-		.y = 135,
-        .width = 100,
-        .height = 50,
-        .fontSize = 20,
-        .bgColor = GRAY,
-        .bgColorSelected = GREEN,
-        .fontColor = WHITE,
-        .text = "Rock",
-        .id = 7,
-		});
 
     toolMenu.x = 0;
     toolMenu.y = 0;
