@@ -272,7 +272,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Explosion Mode",
+        .text = "Explosion Mode (5)",
         .id = MODE_EXPLODE,
         });
     toolMenu.addLabel({
@@ -409,7 +409,8 @@ int main() {
 		if (IsKeyPressed(KEY_ONE)) SetMode(MODE_DRAG);
 		if (IsKeyPressed(KEY_TWO)) SetMode(MODE_WELD);
 		if (IsKeyPressed(KEY_THREE)) SetMode(MODE_WHEEL);
-		if (IsKeyPressed(KEY_FOUR)) SetMode(MODE_DRAW);
+        if (IsKeyPressed(KEY_FOUR)) SetMode(MODE_DRAW);
+        if (IsKeyPressed(KEY_FIVE)) SetMode(MODE_EXPLODE);
         spawnMenu.active = IsKeyDown(KEY_Q);
 		toolMenu.active = IsKeyDown(KEY_C);
 
