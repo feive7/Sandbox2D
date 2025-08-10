@@ -132,6 +132,19 @@ b2BodyId CreateRock(b2WorldId worldId, b2Vec2 position, b2BodyType bodyType) {
 
     return CreatePolygon(worldId, position, hull, bodyType); // Create the polygon body
 }
+b2BodyId CreateSegment(b2WorldId worldId, b2Vec2 start, b2Vec2 end, b2BodyType bodyType) {
+	b2Vec2 midpoint = b2MulSV(.5,b2Add(start, end)); // Midpoint of the segment
+
+    b2BodyDef segmentBodyDef = b2DefaultBodyDef(); // Create body
+    segmentBodyDef.position = midpoint; // Set position
+    segmentBodyDef.type = bodyType;
+    b2BodyId segmentBodyId = b2CreateBody(worldId, &segmentBodyDef);
+    b2Segment segment = { b2Sub(start,midpoint), b2Sub(end,midpoint) }; // Create segment
+    b2ShapeDef segmentShapeDef = b2DefaultShapeDef(); // Create shape definition
+    segmentShapeDef.density = 1.0f; // Density required nonzero
+    b2CreateSegmentShape(segmentBodyId, &segmentShapeDef, &segment); // Bind it all together
+    return segmentBodyId; // Return the id
+}
 
 // Constraints & Joints
 void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, float length, bool collideConnected, float dampingRatio, bool enableLimit, bool enableMotor, bool enableSpring, float hertz, b2Vec2 localAnchorA, b2Vec2 localAnchorB, float maxLength, float maxMotorForce, float minLength, float motorSpeed) {
