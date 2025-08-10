@@ -13,6 +13,7 @@ enum Selection_mode {
     MODE_WHEEL,
     MODE_DRAW,
     MODE_EXPLODE,
+	MODE_SEGMENT,
     MODE_COUNT,
 };
 enum Spawn_Objects {
@@ -275,9 +276,21 @@ void InitGUIs() {
         .text = "Explosion Mode (5)",
         .id = MODE_EXPLODE,
         });
+    toolMenu.addButton({
+		.x = 0,
+		.y = 275,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = BLUE,
+        .fontColor = WHITE,
+        .text = "Segment Mode",
+        .id = MODE_SEGMENT,
+        });
     toolMenu.addLabel({
         .x = 0,
-        .y = 300,
+        .y = 400,
         .fontSize = 20,
         .id = 0,
         .fontColor = BLACK,
@@ -328,6 +341,11 @@ void UpdateGUIs() {
         toolMenu.setText(0,
             "Left Click: Explode at cursor\n"
             "Right Click: Implode at cursor\n"
+        );
+        break;
+    case MODE_SEGMENT:
+        toolMenu.setText(0,
+            "Left Click 2 Points: Create segment\n"
         );
         break;
     }
@@ -579,6 +597,18 @@ int main() {
                     b2World_Explode(worldId, &explosionDef); // Explode at mouse position
                 }
 			}
+            else if (Selection.mode == MODE_SEGMENT) {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Selection.numOfBodyIds == 0) {
+                    Selection.localPoints[0] = { mWorldPos.x,mWorldPos.y };
+                    Selection.numOfBodyIds++;
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Selection.numOfBodyIds == 1) {
+                    Selection.localPoints[1] = { mWorldPos.x,mWorldPos.y };
+					b2BodyId segmentBodyId = CreateSegment(worldId, Selection.localPoints[0], Selection.localPoints[1], b2_staticBody);
+					bodies.push_back({ segmentBodyId, BLACK });
+					Selection.clear(); // Clear selection
+                }
+            }
         }
 
         // Simulate
