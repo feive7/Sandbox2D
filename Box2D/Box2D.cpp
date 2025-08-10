@@ -482,11 +482,13 @@ int main() {
         ClearBackground(RAYWHITE);
         BeginMode2D(viewport);
 
+        rlBegin(RL_TRIANGLES);
         for (RayBody& body : bodies) {
             body.draw();
-            b2JointId jointArray[3];
-            b2Body_GetJoints(body.id, jointArray, 3);
+            /*b2JointId jointArray[3];
+            b2Body_GetJoints(body.id, jointArray, 3);*/
         }
+        rlEnd();
         
         if (Selection.mode == MODE_WELD && Selection.numOfBodyIds) {
             if (b2Body_IsValid(Selection.bodyIds[0])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[0]));
