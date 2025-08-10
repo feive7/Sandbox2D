@@ -12,6 +12,7 @@ enum Selection_mode {
     MODE_WELD,
     MODE_WHEEL,
     MODE_DRAW,
+    MODE_EXPLODE,
     MODE_COUNT,
 };
 
@@ -209,9 +210,21 @@ void InitGUIs() {
         .text = "Drawing Mode (4)",
         .id = MODE_DRAW,
         });
+    toolMenu.addButton({
+        .x = 0,
+        .y = 220,
+        .width = 130,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = BLUE,
+        .fontColor = WHITE,
+        .text = "Explosion Mode",
+        .id = MODE_EXPLODE,
+        });
     toolMenu.addLabel({
 		.x = 0,
-        .y = 220,
+        .y = 300,
 		.fontSize = 20,
 		.fontColor = BLACK,
         .text = "Left Click: Grab Body, Select\n"
@@ -443,6 +456,15 @@ int main() {
 					bodies.push_back({ CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 3.0f, b2_dynamicBody), RandomColor() });
                 }
             }
+            else if (Selection.mode == MODE_EXPLODE) {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+					b2ExplosionDef explosionDef = b2DefaultExplosionDef();
+                    explosionDef.position = { mWorldPos.x,mWorldPos.y };
+                    explosionDef.radius = 50.0f;
+					explosionDef.impulsePerLength = 10000.0f;
+					b2World_Explode(worldId, &explosionDef); // Explode at mouse position
+                }
+			}
         }
 
         // Simulate
