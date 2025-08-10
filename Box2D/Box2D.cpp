@@ -346,6 +346,7 @@ void UpdateGUIs() {
     case MODE_SEGMENT:
         toolMenu.setText(0,
             "Left Click 2 Points: Create segment\n"
+			"Right Click: Cancel\n"
         );
         break;
     }
@@ -608,7 +609,10 @@ int main() {
 					bodies.push_back({ segmentBodyId, BLACK });
 					Selection.clear(); // Clear selection
                 }
+                if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+                    Selection.clear(); // Clear selection
             }
+        }
         }
 
         // Simulate
