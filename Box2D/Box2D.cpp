@@ -420,8 +420,10 @@ int main() {
                     }
                 }
                 else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                    if (Selection.numOfBodyIds > 0) {
                     b2Body_SetFixedRotation(Selection.bodyIds[0], false);
                     Selection.numOfBodyIds = 0;
+                }
                 }
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
