@@ -290,7 +290,7 @@ void InitGUIs() {
         });
     toolMenu.addLabel({
         .x = 0,
-        .y = 400,
+        .y = 360,
         .fontSize = 20,
         .id = 0,
         .fontColor = BLACK,
@@ -315,8 +315,9 @@ void UpdateGUIs() {
     case MODE_DRAG:
         toolMenu.setText(0, 
             "Left Click: Grab Body\n"
-			"Right Click While Grabbing: Freeze\n"
-            "Body\n"
+			"Control + Left Click: Grab Center\n"
+			"Grabbing + Right Click: Freeze Body\n"
+			"Grabbing + A / D: Rotate Body\n"
         );
         break;
     case MODE_WELD:
