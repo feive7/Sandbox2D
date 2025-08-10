@@ -201,6 +201,15 @@ void InitGUIs() {
         .text = "Hexagon",
         .id = SPAWN_HEXAGON,
         });
+    
+    spawnMenu.addLabel({
+        .x = 0,
+        .y = 680,
+        .fontSize = 20,
+        .fontColor = BLACK,
+        .text = "Left Click: Spawn Unfrozen \n"
+                "Right Click: Spawn Frozen\n"
+        });
 
     toolMenu.x = 0;
     toolMenu.y = 0;
@@ -267,13 +276,19 @@ void InitGUIs() {
         .id = MODE_EXPLODE,
         });
     toolMenu.addLabel({
-		.x = 0,
+        .x = 0,
         .y = 300,
+        .fontSize = 20,
+        .id = 0,
+        .fontColor = BLACK,
+        .text = "Text Here",
+        });
+    toolMenu.addLabel({
+		.x = 0,
+        .y = 500,
 		.fontSize = 20,
 		.fontColor = BLACK,
-        .text = "Left Click: Grab Body, Select\n"
-                "Right Click While Grabbing: Freeze Body\n"
-                "C: Open Tool Menu\n"
+        .text = "C: Open Tool Menu\n"
                 "Z: Undo Last Body\n"
                 "R: Reset Scene\n"
                 "Q: Open Menu\n"
@@ -281,6 +296,41 @@ void InitGUIs() {
 				"Middle Mouse Button: Pan Viewport\n"
         });
     toolMenu.sizeToFit();
+}
+void UpdateGUIs() {
+    switch (Selection.mode) {
+    case MODE_DRAG:
+        toolMenu.setText(0, 
+            "Left Click: Grab Body\n"
+			"Right Click While Grabbing: Freeze\n"
+            "Body\n"
+        );
+        break;
+    case MODE_WELD:
+        toolMenu.setText(0,
+			"Left Click 2 Objects: Weld bodies in\n"
+            "place\n"
+        );
+        break;
+    case MODE_WHEEL:
+        toolMenu.setText(0,
+            "Left Click Object: Place wheel\n"
+            "at cursor\n"
+        );
+        break;
+    case MODE_DRAW:
+        toolMenu.setText(0,
+            "Left Click: Draw pellets\n"
+            "Right Click: Draw tiny boxes\n"
+        );
+        break;
+    case MODE_EXPLODE:
+        toolMenu.setText(0,
+            "Left Click: Explode at cursor\n"
+            "Right Click: Implode at cursor\n"
+        );
+        break;
+    }
 }
 void SetMode(int mode) {
     Selection.mode = mode;
@@ -314,6 +364,7 @@ int main() {
 
     // menu setup
     InitGUIs();
+	UpdateGUIs();
 
     // One time control display
     bool OTCD = true;
@@ -372,6 +423,7 @@ int main() {
                 int buttonId = toolMenu.click(mPos); // Get ID of button clicked
                 if (buttonId != -1) { // Button was pressed
 					SetMode(buttonId); // Set the mode based on button ID
+					UpdateGUIs(); // Update the GUIs to reflect the new mode
                 }
             }
         }
