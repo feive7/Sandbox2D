@@ -15,6 +15,18 @@ enum Selection_mode {
     MODE_EXPLODE,
     MODE_COUNT,
 };
+enum Spawn_Objects {
+    SPAWN_BALL,
+    SPAWN_BOX,
+    SPAWN_CUP,
+    SPAWN_PLANK,
+    SPAWN_PELLET,
+    SPAWN_TINYBOX,
+    SPAWN_ROCK,
+    SPAWN_TRIANGLE,
+    SPAWN_PENTAGON,
+    SPAWN_HEXAGON,
+};
 
 GUI spawnMenu;
 GUI controlMenu;
@@ -63,7 +75,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Ball",
-        .id = 0,
+        .id = SPAWN_BALL,
         });
     spawnMenu.addButton({
         .x = 102,
@@ -75,7 +87,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Box",
-        .id = 1,
+        .id = SPAWN_BOX,
         });
 	// Misc Objects
     spawnMenu.addLabel({
@@ -95,7 +107,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Cup",
-        .id = 2,
+        .id = SPAWN_CUP,
         });
     spawnMenu.addButton({
         .x = 102,
@@ -107,7 +119,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Plank",
-        .id = 3,
+        .id = SPAWN_PLANK,
         });
     spawnMenu.addButton({
         .x = 204,
@@ -119,7 +131,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Pellet",
-        .id = 4,
+        .id = SPAWN_PELLET,
         });
     spawnMenu.addButton({
         .x = 306,
@@ -131,8 +143,9 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Tiny Box",
-        .id = 5,
+        .id = SPAWN_TINYBOX,
         });
+    // Regular Polygons
     spawnMenu.addLabel({
         .x = 0,
         .y = 200,
@@ -150,7 +163,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Triangle",
-        .id = 6,
+        .id = SPAWN_TRIANGLE,
         });
     spawnMenu.addButton({
 		.x = 102,
@@ -162,7 +175,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Pentagon",
-        .id = 8,
+        .id = SPAWN_PENTAGON,
         });
     spawnMenu.addButton({
         .x = 204,
@@ -174,7 +187,7 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Hexagon",
-        .id = 9,
+        .id = SPAWN_HEXAGON,
         });
 
     toolMenu.x = 0;
@@ -356,23 +369,23 @@ int main() {
                 int buttonId = spawnMenu.click(mPos); // Get ID of button clicked
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
                 switch (buttonId) {
-                case 0:
+                case SPAWN_BOX:
                     bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 10.0f, b2_dynamicBody), RandomColor() }); break;
-                case 1:
+                case SPAWN_BALL:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {10.0f,10.0f}, b2_dynamicBody), RandomColor() }); break;
-                case 2:
+                case SPAWN_CUP:
                     bodies.push_back({ CreateCup(worldId, Selection.spawnPos, {20.0f,20.0f}, b2_dynamicBody), RandomColor() }); break;
-                case 3:
+                case SPAWN_PLANK:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {20.0f,2.0f}, b2_dynamicBody), RandomColor() }); break;
-                case 4:
+                case SPAWN_PELLET:
                     bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 3.0f, b2_dynamicBody), RandomColor() }); break;
-                case 5:
+                case SPAWN_TINYBOX:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
-                case 6:
+                case SPAWN_TRIANGLE:
 					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 3, 10.0f, b2_dynamicBody), RandomColor() }); break;
-                case 8:
+                case SPAWN_PENTAGON:
                     bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, b2_dynamicBody), RandomColor() }); break;
-                case 9:
+                case SPAWN_HEXAGON:
                     bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 6, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 }
             }
