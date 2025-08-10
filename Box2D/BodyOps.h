@@ -94,6 +94,43 @@ b2BodyId CreateHollowBox(b2WorldId worldId, b2Vec2 center, b2Vec2 extent, b2Body
 
     return hollowBoxBodyId;
 }
+b2BodyId CreatePolygon(b2WorldId worldId, b2Vec2 position, b2Hull hull, b2BodyType bodyType) {
+    b2BodyDef polyBodyDef = b2DefaultBodyDef();
+    polyBodyDef.position = position;
+    polyBodyDef.type = bodyType;
+    b2BodyId polyBodyId = b2CreateBody(worldId, &polyBodyDef);
+
+
+	b2Polygon polygon = b2MakePolygon(&hull, 0); // Create polygon from hull
+
+    b2ShapeDef polyShapeDef = b2DefaultShapeDef();
+    polyShapeDef.density = 1.0f; // Density required nonzero
+
+    b2CreatePolygonShape(polyBodyId, &polyShapeDef, &polygon);
+
+	return polyBodyId; // Return the id
+}
+b2BodyId CreateRegularPolygon(b2WorldId worldId, b2Vec2 position, int sides, float radius, b2BodyType bodyType) {
+    b2Vec2 verts[10];
+    for (int i = 0; i < sides; i++) {
+        float t = 2 * PI * i / (float)sides;
+        verts[i] = { radius * cos(t), radius * sin(t) };
+    }
+    b2Hull hull = b2ComputeHull(verts, sides); // Compute the convex hull from the vertices
+
+	return CreatePolygon(worldId, position, hull, bodyType); // Create the polygon body
+}
+b2BodyId CreateRock(b2WorldId worldId, b2Vec2 position, b2BodyType bodyType) {
+    b2Vec2 verts[8];
+    for (int i = 0; i < 8; i++) {
+        float radius = GetRandomValue(5,20); // Random radius between 5 and 20
+        float t = 2 * PI * i / 8.0f;
+        verts[i] = { radius * cos(t), radius * sin(t) };
+    }
+    b2Hull hull = b2ComputeHull(verts, 8.0f); // Compute the convex hull from the vertices
+
+    return CreatePolygon(worldId, position, hull, bodyType); // Create the polygon body
+}
 
 // Constraints & Joints
 void DistanceJointBodies(b2WorldId worldId, b2BodyId bodyA, b2BodyId bodyB, float length, bool collideConnected, float dampingRatio, bool enableLimit, bool enableMotor, bool enableSpring, float hertz, b2Vec2 localAnchorA, b2Vec2 localAnchorB, float maxLength, float maxMotorForce, float minLength, float motorSpeed) {
