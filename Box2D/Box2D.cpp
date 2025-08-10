@@ -285,7 +285,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = BLUE,
         .fontColor = WHITE,
-        .text = "Segment Mode",
+        .text = "Segment Mode (6)",
         .id = MODE_SEGMENT,
         });
     toolMenu.addLabel({
@@ -431,6 +431,7 @@ int main() {
 		if (IsKeyPressed(KEY_THREE)) SetMode(MODE_WHEEL);
         if (IsKeyPressed(KEY_FOUR)) SetMode(MODE_DRAW);
         if (IsKeyPressed(KEY_FIVE)) SetMode(MODE_EXPLODE);
+        if (IsKeyPressed(KEY_SIX)) SetMode(MODE_SEGMENT);
         spawnMenu.active = IsKeyDown(KEY_Q);
 		toolMenu.active = IsKeyDown(KEY_C);
 
