@@ -632,6 +632,10 @@ int main() {
         }
         rlEnd();
         
+        if (Selection.mode == MODE_SEGMENT && Selection.numOfBodyIds) {
+			DrawLine(Selection.localPoints[0].x, Selection.localPoints[0].y, mWorldPos.x, mWorldPos.y, BLACK);
+        }
+        
         if (Selection.mode == MODE_WELD && Selection.numOfBodyIds) {
             if (b2Body_IsValid(Selection.bodyIds[0])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[0]));
             if (b2Body_IsValid(Selection.bodyIds[1])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[1]));
