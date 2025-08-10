@@ -44,128 +44,118 @@ void InitGUIs() {
     spawnMenu.width = 730;
     spawnMenu.height = 730;
     spawnMenu.padding = 10;
+	// Regular Objects
+    spawnMenu.addLabel({
+        .x = 0,
+        .y = 0,
+        .fontSize = 30,
+        .fontColor = BLACK,
+        .text = "Regular Objects",
+        });
     spawnMenu.addButton({
-        .width = 130,
+        .x = 0,
+        .y = 35,
+        .width = 100,
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Ball",
+        .text = "Ball",
         .id = 0,
         });
     spawnMenu.addButton({
-        .width = 130,
+        .x = 102,
+        .y = 35,
+        .width = 100,
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Box",
+        .text = "Box",
         .id = 1,
         });
+	// Misc Objects
+    spawnMenu.addLabel({
+        .x = 0,
+        .y = 100,
+        .fontSize = 30,
+        .fontColor = BLACK,
+        .text = "Misc Objects",
+        });
     spawnMenu.addButton({
-        .width = 130,
+        .x = 0,
+        .y = 135,
+        .width = 100,
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Cup",
+        .text = "Cup",
         .id = 2,
         });
     spawnMenu.addButton({
-        .width = 130,
+        .x = 102,
+        .y = 135,
+        .width = 100,
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Plank",
+        .text = "Plank",
         .id = 3,
         });
     spawnMenu.addButton({
-        .width = 130,
+        .x = 204,
+        .y = 135,
+        .width = 100,
         .height = 50,
         .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Pellet",
+        .text = "Pellet",
         .id = 4,
         });
     spawnMenu.addButton({
-        .width = 130,
+        .x = 306,
+        .y = 135,
+        .width = 100,
         .height = 50,
-        .fontSize = 15,
+        .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Tiny Box",
+        .text = "Tiny Box",
         .id = 5,
         });
     spawnMenu.addButton({
-        .width = 130,
+		.x = 408,
+		.y = 135,
+        .width = 100,
         .height = 50,
-        .fontSize = 15,
+        .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Pentagon",
+        .text = "Pentagon",
         .id = 6,
         });
     spawnMenu.addButton({
-        .width = 130,
+		.x = 510,
+		.y = 135,
+        .width = 100,
         .height = 50,
-        .fontSize = 15,
+        .fontSize = 20,
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Spawn Rock",
+        .text = "Rock",
         .id = 7,
 		});
-
-    spawnMenu.addButton({
-        .width = 130,
-        .height = 50,
-        .fontSize = 15,
-        .bgColor = GRAY,
-        .bgColorSelected = GREEN,
-        .fontColor = WHITE,
-        .text = "Text Here",
-        .id = 8,
-        });
-    spawnMenu.addButton({
-        .width = 130,
-        .height = 50,
-        .fontSize = 15,
-        .bgColor = GRAY,
-        .bgColorSelected = GREEN,
-        .fontColor = WHITE,
-        .text = "Text Here",
-        .id = 9,
-        });
-    spawnMenu.addButton({
-        .width = 130,
-        .height = 50,
-        .fontSize = 15,
-        .bgColor = GRAY,
-        .bgColorSelected = GREEN,
-        .fontColor = WHITE,
-        .text = "Text Here",
-        .id = 10,
-        });
-    spawnMenu.addButton({
-        .width = 130,
-        .height = 50,
-        .fontSize = 15,
-        .bgColor = GRAY,
-        .bgColorSelected = GREEN,
-        .fontColor = WHITE,
-        .text = "Text Here",
-        .id = 11,
-        });
-    spawnMenu.arrangeButtons();
 
     toolMenu.x = 0;
     toolMenu.y = 0;
@@ -229,7 +219,7 @@ void InitGUIs() {
                 "C: Open Tool Menu\n"
                 "Z: Undo Last Body\n"
                 "R: Reset Scene\n"
-                "Q: Open Spawn Menu\n"
+                "Q: Open Menu\n"
 				"Scroll Wheel: Zoom Viewport\n"
 				"Middle Mouse Button: Pan Viewport\n"
         });
@@ -265,7 +255,7 @@ int main() {
     std::vector<RayBody> bodies;
     ResetScene(worldId, bodies); // Reset scene
 
-    // Spawn menu setup
+    // menu setup
     InitGUIs();
 
     // One time control display
@@ -349,7 +339,7 @@ int main() {
                 case 6:
 					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 case 7:
-					bodies.push_back({ CreateRock(worldId, {0.0f,0.0f}, b2_dynamicBody), RandomColor() }); break;
+					bodies.push_back({ CreateRock(worldId, Selection.spawnPos, b2_dynamicBody), RandomColor() }); break;
                 }
             }
         }
@@ -445,11 +435,11 @@ int main() {
             }
             else if (Selection.mode == MODE_DRAW) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-                    // Spawn a new box at the mouse position
+                    // a new box at the mouse position
                     bodies.push_back({ CreateBox(worldId, { mWorldPos.x,mWorldPos.y }, {3.0f,3.0f}, b2_dynamicBody), RandomColor() });
                 }
                 else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-					// Spawn a new ball at the mouse position
+					// a new ball at the mouse position
 					bodies.push_back({ CreateBall(worldId, { mWorldPos.x,mWorldPos.y }, 3.0f, b2_dynamicBody), RandomColor() });
                 }
             }
