@@ -460,9 +460,16 @@ int main() {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 					b2ExplosionDef explosionDef = b2DefaultExplosionDef();
                     explosionDef.position = { mWorldPos.x,mWorldPos.y };
-                    explosionDef.radius = 50.0f;
+                    explosionDef.radius = 100.0f;
 					explosionDef.impulsePerLength = 10000.0f;
 					b2World_Explode(worldId, &explosionDef); // Explode at mouse position
+                }
+                if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+                    b2ExplosionDef explosionDef = b2DefaultExplosionDef();
+                    explosionDef.position = { mWorldPos.x,mWorldPos.y };
+                    explosionDef.radius = 100.0f;
+                    explosionDef.impulsePerLength = -10000.0f;
+                    b2World_Explode(worldId, &explosionDef); // Explode at mouse position
                 }
 			}
         }
