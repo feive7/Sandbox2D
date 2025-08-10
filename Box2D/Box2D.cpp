@@ -45,8 +45,6 @@ void InitGUIs() {
     spawnMenu.height = 730;
     spawnMenu.padding = 10;
     spawnMenu.addButton({
-        .x = 0,
-        .y = 0,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -57,8 +55,6 @@ void InitGUIs() {
         .id = 0,
         });
     spawnMenu.addButton({
-        .x = 135,
-        .y = 0,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -69,8 +65,6 @@ void InitGUIs() {
         .id = 1,
         });
     spawnMenu.addButton({
-        .x = 270,
-        .y = 0,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -81,8 +75,6 @@ void InitGUIs() {
         .id = 2,
         });
     spawnMenu.addButton({
-        .x = 0,
-        .y = 55,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -93,8 +85,6 @@ void InitGUIs() {
         .id = 3,
         });
     spawnMenu.addButton({
-        .x = 135,
-        .y = 55,
         .width = 130,
         .height = 50,
         .fontSize = 20,
@@ -105,8 +95,6 @@ void InitGUIs() {
         .id = 4,
         });
     spawnMenu.addButton({
-        .x = 270,
-        .y = 55,
         .width = 130,
         .height = 50,
         .fontSize = 15,
@@ -116,6 +104,67 @@ void InitGUIs() {
         .text = "Spawn Tiny Box",
         .id = 5,
         });
+    spawnMenu.addButton({
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Text Here",
+        .id = 6,
+        });
+    spawnMenu.addButton({
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Text Here",
+        .id = 7,
+		});
+    spawnMenu.addButton({
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Text Here",
+        .id = 8,
+        });
+    spawnMenu.addButton({
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Text Here",
+        .id = 9,
+        });
+    spawnMenu.addButton({
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Text Here",
+        .id = 10,
+        });
+    spawnMenu.addButton({
+        .width = 130,
+        .height = 50,
+        .fontSize = 15,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Text Here",
+        .id = 11,
+        });
+    spawnMenu.arrangeButtons();
 
     toolMenu.x = 0;
     toolMenu.y = 0;
