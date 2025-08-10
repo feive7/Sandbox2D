@@ -21,6 +21,7 @@ GUI toolMenu;
 
 struct {
     int mode = MODE_DRAG;
+    b2Vec2 spawnPos;
     b2BodyId bodyIds[10];
     int numOfBodyIds;
     b2Vec2 localPoints[10];
@@ -38,8 +39,10 @@ void ResetScene(b2WorldId worldId, std::vector<RayBody>& bodies) {
     bodies.push_back({ CreateHollowBox(worldId, {0.0f,0.0f}, {130.0f,130.0f}, b2_staticBody),BLUE });
 }
 void InitGUIs() {
-    spawnMenu.x = 0;
-    spawnMenu.y = 0;
+    spawnMenu.x = 30;
+    spawnMenu.y = 30;
+    spawnMenu.width = 730;
+    spawnMenu.height = 730;
     spawnMenu.padding = 10;
     spawnMenu.addButton({
         .x = 0,
@@ -113,7 +116,6 @@ void InitGUIs() {
         .text = "Spawn Tiny Box",
         .id = 5,
         });
-    spawnMenu.sizeToFit();
 
     toolMenu.x = 0;
     toolMenu.y = 0;
@@ -283,24 +285,22 @@ int main() {
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
                 switch (buttonId) {
                 case 0:
-                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 case 1:
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {10.0f,10.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {10.0f,10.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 2:
-                    bodies.push_back({ CreateCup(worldId, {spawnPos.x,spawnPos.y}, {20.0f,20.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateCup(worldId, Selection.spawnPos, {20.0f,20.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 3:
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {20.0f,2.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {20.0f,2.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 4:
-                    bodies.push_back({ CreateBall(worldId, {spawnPos.x,spawnPos.y}, 3.0f, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 3.0f, b2_dynamicBody), RandomColor() }); break;
                 case 5:
-                    bodies.push_back({ CreateBox(worldId, {spawnPos.x,spawnPos.y}, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
                 }
             }
         }
         if (!toolMenu.active && !spawnMenu.active) {
-            spawnMenu.x = mPos.x;
-            spawnMenu.y = mPos.y;
-            
+            Selection.spawnPos = { mWorldPos.x,mWorldPos.y };
             if (Selection.mode == MODE_DRAG) {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     // Check if a body is under the mouse
@@ -431,9 +431,11 @@ int main() {
         if (toolMenu.active) {
             OTCD = false;
 		}
+
+        Vector2 screenPos = GetWorldToScreen2D({ Selection.spawnPos.x, Selection.spawnPos.y }, viewport);
         if (spawnMenu.active) {
-            DrawCircle(spawnMenu.x, spawnMenu.y, 10, { 120,120,120,255 });
-            DrawCircle(spawnMenu.x, spawnMenu.y, 6, { 255,255,255,255 });
+            DrawCircle(screenPos.x, screenPos.y, 10, { 120,120,120,255 });
+            DrawCircle(screenPos.x, screenPos.y, 6, { 255,255,255,255 });
         }
 
         EndDrawing();
