@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 struct Label {
-	int x, y, fontSize;
+	int x, y, fontSize, id;
 	Color fontColor;
 	std::string text;
 };
@@ -122,5 +122,14 @@ public:
 			btn.y = currentY;
 			currentX += btn.width + padding; // Move to next button position
 		}
+	}
+	void setText(int id, std::string text) {
+		for(Label& lbl : labels) {
+			if (lbl.id == id) {
+				lbl.text = text;
+				return;
+			}
+		}
+		printf("Label with ID %d not found.\n", id);
 	}
 };
