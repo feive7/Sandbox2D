@@ -112,9 +112,10 @@ b2BodyId CreatePolygon(b2WorldId worldId, b2Vec2 position, b2Hull hull, b2BodyTy
 }
 b2BodyId CreateRegularPolygon(b2WorldId worldId, b2Vec2 position, int sides, float radius, b2BodyType bodyType) {
     b2Vec2 verts[10];
+	float angOffset = PI / (float)sides - PI / 2.0f; // Offset so the bottom of the polygon is flat
     for (int i = 0; i < sides; i++) {
         float t = 2 * PI * i / (float)sides;
-        verts[i] = { radius * cos(t), radius * sin(t) };
+        verts[i] = { radius * cos(t + angOffset), radius * sin(t + angOffset) };
     }
     b2Hull hull = b2ComputeHull(verts, sides); // Compute the convex hull from the vertices
 
