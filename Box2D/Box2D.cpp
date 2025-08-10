@@ -111,7 +111,7 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Text Here",
+        .text = "Spawn Pentagon",
         .id = 6,
         });
     spawnMenu.addButton({
@@ -121,9 +121,10 @@ void InitGUIs() {
         .bgColor = GRAY,
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
-        .text = "Text Here",
+        .text = "Spawn Rock",
         .id = 7,
 		});
+
     spawnMenu.addButton({
         .width = 130,
         .height = 50,
@@ -345,6 +346,10 @@ int main() {
                     bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 3.0f, b2_dynamicBody), RandomColor() }); break;
                 case 5:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
+                case 6:
+					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                case 7:
+					bodies.push_back({ CreateRock(worldId, {0.0f,0.0f}, b2_dynamicBody), RandomColor() }); break;
                 }
             }
         }

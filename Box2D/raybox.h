@@ -14,7 +14,7 @@ void DrawBody(b2BodyId id, Color color) {
         switch (shapeType) {
         case b2_polygonShape: {
             b2Polygon poly = b2Shape_GetPolygon(shape); // Polygon
-            b2Vec2 centroid = poly.centroid;
+            b2Vec2 centroid = b2Body_GetWorldPoint(id, poly.centroid);
 			b2Vec2 rotOffset = b2RotateVector(bodyRotation, centroid); // Rotate centroid by body rotation
 
             // Get Transformation
@@ -27,10 +27,19 @@ void DrawBody(b2BodyId id, Color color) {
             b2AABB aabb = b2ComputePolygonAABB(&poly, unrotated);
             b2Vec2 extents = b2AABB_Extents(aabb);
 
+            rlBegin(RL_TRIANGLES);
+			rlColor4ub(color.r, color.g, color.b, color.a);
+            for (int j = 0; j < poly.count; j++) {
+                b2Vec2 v1 = b2TransformPoint(transformation, poly.vertices[j]);
+                b2Vec2 v2 = b2TransformPoint(transformation, poly.vertices[(j+1)%poly.count]);
+                rlVertex2f(v1.x, v1.y);
+                rlVertex2f(centroid.x, centroid.y);
+                rlVertex2f(v2.x, v2.y);
+			}
+            rlEnd();
             //DrawRectanglePro({ position.x, position.y, 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(rotation) * RAD2DEG, (b2Body_IsAwake(id) ? RED : GRAY)); // Draw ground
-            DrawRectanglePro({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y , 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(bodyRotation)* RAD2DEG, ColorBrightness(color, -0.2f)); // Draw ground
-			DrawRectanglePro({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y , 2 * extents.x - 2, 2 * extents.y - 2 }, { extents.x - 1, extents.y - 1 }, b2Rot_GetAngle(bodyRotation) * RAD2DEG, color); // Draw ground
-            DrawCircleV({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y }, 2, ColorBrightness(color, -0.2f)); // Draw center circle
+            //DrawRectanglePro({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y , 2 * extents.x, 2 * extents.y }, { extents.x, extents.y }, b2Rot_GetAngle(bodyRotation)* RAD2DEG, ColorBrightness(color, -0.2f)); // Draw ground
+			//DrawRectanglePro({ bodyCenter.x + rotOffset.x, bodyCenter.y + rotOffset.y , 2 * extents.x - 2, 2 * extents.y - 2 }, { extents.x - 1, extents.y - 1 }, b2Rot_GetAngle(bodyRotation) * RAD2DEG, color); // Draw ground
             break;
         }
         case b2_circleShape: {
