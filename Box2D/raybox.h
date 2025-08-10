@@ -68,11 +68,13 @@ void DrawBodySolid(b2BodyId id, Color color) {
         case b2_polygonShape: {
             b2Polygon poly = b2Shape_GetPolygon(shape); // Polygon
 			b2Vec2 centroid = poly.centroid;
-			for (int j = 0; j < poly.count; j++) {
-                b2Vec2 v1 = b2Add(bodyCenter, b2RotateVector(bodyRotation, poly.vertices[j])); // Rotate vertex by body rotation
-                b2Vec2 v2 = b2Add(bodyCenter, b2RotateVector(bodyRotation, poly.vertices[(j+1)%poly.count])); // Rotate vertex by body rotation
+            b2Vec2 rotOffset = b2RotateVector(bodyRotation, centroid); // Rotate centroid by body rotation
+            for (int j = 0; j < poly.count; j++) {
+                b2Vec2 v1 = b2TransformPoint(bodyTransform, poly.vertices[j]); // Rotate vertex by body rotation
+                b2Vec2 v2 = b2TransformPoint(bodyTransform,poly.vertices[(j+1)%poly.count]); // Rotate vertex by body rotation
+				b2Vec2 tCentroid = b2TransformPoint(bodyTransform, centroid); // Rotate centroid by body rotation
                 rlVertex2f(v1.x, v1.y); // Vertex of the polygon
-                rlVertex2f(centroid.x + bodyCenter.x, centroid.y + bodyCenter.y); // Center of the body
+                rlVertex2f(tCentroid.x, tCentroid.y); // Center of the body
                 rlVertex2f(v2.x, v2.y); // Vertex of the polygon
 			}
             break;
