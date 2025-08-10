@@ -505,7 +505,8 @@ int main() {
 
         rlBegin(RL_TRIANGLES);
         for (RayBody& body : bodies) {
-            body.draw();
+            //body.draw();
+			DrawBodySolid(body.id, body.color);
             /*b2JointId jointArray[3];
             b2Body_GetJoints(body.id, jointArray, 3);*/
         }
