@@ -110,4 +110,17 @@ public:
 		selectButton(buttonId); // Select the button if clicked
 		return buttonId; // Return the ID of the button clicked, or -1 if none
 	}
+	void arrangeButtons() {
+		int currentX = 0;
+		int currentY = 0;
+		for (Button& btn : buttons) {
+			if (currentX + btn.width + padding > width) {
+				currentX = 0; // Reset X position
+				currentY += btn.height + padding; // Move to next row
+			}
+			btn.x = currentX;
+			btn.y = currentY;
+			currentX += btn.width + padding; // Move to next button position
+		}
+	}
 };
