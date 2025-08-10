@@ -53,6 +53,47 @@ void DrawBody(b2BodyId id, Color color) {
         }
     }
 }
+void DrawBodySolid(b2BodyId id, Color color) {
+    b2ShapeId shapes[10];
+    b2Body_GetShapes(id, shapes, 10);
+
+	rlColor4ub(color.r, color.g, color.b, color.a); // Set color for drawing
+    for (int i = 0; i < b2Body_GetShapeCount(id); i++) {
+        b2ShapeId shape = shapes[i]; // Shape
+        int shapeType = b2Shape_GetType(shape);
+        b2Transform bodyTransform = b2Body_GetTransform(id);
+        b2Vec2 bodyCenter = b2Body_GetPosition(id); // Get position of dynamic body
+        b2Rot bodyRotation = b2Body_GetRotation(id); // Get rotation of dynamic body
+        switch (shapeType) {
+        case b2_polygonShape: {
+            b2Polygon poly = b2Shape_GetPolygon(shape); // Polygon
+			b2Vec2 centroid = poly.centroid;
+			for (int j = 0; j < poly.count; j++) {
+                b2Vec2 v1 = b2Add(bodyCenter, b2RotateVector(bodyRotation, poly.vertices[j])); // Rotate vertex by body rotation
+                b2Vec2 v2 = b2Add(bodyCenter, b2RotateVector(bodyRotation, poly.vertices[(j+1)%poly.count])); // Rotate vertex by body rotation
+                rlVertex2f(v1.x, v1.y); // Vertex of the polygon
+                rlVertex2f(centroid.x + bodyCenter.x, centroid.y + bodyCenter.y); // Center of the body
+                rlVertex2f(v2.x, v2.y); // Vertex of the polygon
+			}
+            break;
+        }
+        case b2_circleShape: {
+			b2Circle circle = b2Shape_GetCircle(shape);
+			b2Vec2 edge = b2Add(bodyTransform.p, b2MulSV(circle.radius, { bodyTransform.q.c,bodyTransform.q.s }));
+			float r = circle.radius;
+			for (int j = 0; j < CIRCLE_TRI_COUNT; j++) {
+                float angle = 2 * PI * j / CIRCLE_TRI_COUNT; // Angle for the circle segment
+                b2Vec2 v1 = { r * cos(angle), r * sin(angle) }; // Vertex of the circle segment
+                b2Vec2 v2 = { r * cos(angle + 2 * PI / CIRCLE_TRI_COUNT), r * sin(angle + 2 * PI / CIRCLE_TRI_COUNT) }; // Next vertex of the circle segment
+                rlVertex2f(v1.x + bodyCenter.x, v1.y + bodyCenter.y); // Vertex of the circle segment
+                rlVertex2f(edge.x, edge.y); // Edge of the circle
+                rlVertex2f(v2.x + bodyCenter.x, v2.y + bodyCenter.y); // Next vertex of the circle segment
+			}
+            break;
+        }
+        }
+    }
+}
 void DrawJoint(b2WorldId world, b2JointId joint) {
     if (!b2Joint_IsValid(joint)) return;
     b2BodyId bodyA = b2Joint_GetBodyA(joint);
