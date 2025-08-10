@@ -369,9 +369,9 @@ int main() {
                 int buttonId = spawnMenu.click(mPos); // Get ID of button clicked
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
                 switch (buttonId) {
-                case SPAWN_BOX:
-                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 case SPAWN_BALL:
+                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                case SPAWN_BOX:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {10.0f,10.0f}, b2_dynamicBody), RandomColor() }); break;
                 case SPAWN_CUP:
                     bodies.push_back({ CreateCup(worldId, Selection.spawnPos, {20.0f,20.0f}, b2_dynamicBody), RandomColor() }); break;
