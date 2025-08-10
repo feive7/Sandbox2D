@@ -133,9 +133,28 @@ void InitGUIs() {
         .text = "Tiny Box",
         .id = 5,
         });
+    spawnMenu.addLabel({
+        .x = 0,
+        .y = 200,
+        .fontSize = 30,
+        .fontColor = BLACK,
+        .text = "Shapes",
+		});
     spawnMenu.addButton({
-		.x = 408,
-		.y = 135,
+        .x = 0,
+        .y = 235,
+        .width = 100,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Triangle",
+        .id = 6,
+        });
+    spawnMenu.addButton({
+		.x = 102,
+		.y = 235,
         .width = 100,
         .height = 50,
         .fontSize = 20,
@@ -143,7 +162,19 @@ void InitGUIs() {
         .bgColorSelected = GREEN,
         .fontColor = WHITE,
         .text = "Pentagon",
-        .id = 6,
+        .id = 8,
+        });
+    spawnMenu.addButton({
+        .x = 204,
+        .y = 235,
+        .width = 100,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Hexagon",
+        .id = 9,
         });
 
     toolMenu.x = 0;
@@ -338,9 +369,11 @@ int main() {
                 case 5:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
                 case 6:
-					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, b2_dynamicBody), RandomColor() }); break;
-                case 7:
-					bodies.push_back({ CreateRock(worldId, Selection.spawnPos, b2_dynamicBody), RandomColor() }); break;
+					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 3, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                case 8:
+                    bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                case 9:
+                    bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 6, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 }
             }
         }
