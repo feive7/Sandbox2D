@@ -376,32 +376,36 @@ int main() {
             }
         }
         if (spawnMenu.active) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                 spawnMenu.deselectButtons(); // Deselect all buttons
                 int buttonId = spawnMenu.click(mPos); // Get ID of button clicked
                 Vector2 spawnPos = GetScreenToWorld2D({ (float)spawnMenu.x,(float)spawnMenu.y }, viewport);
+				b2BodyType bodyType = (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) ? b2_dynamicBody : b2_staticBody; // Use dynamic body if right mouse button is pressed
                 switch (buttonId) {
                 case SPAWN_BALL:
-                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 10.0f, bodyType), RandomColor() }); break;
                 case SPAWN_BOX:
-                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {10.0f,10.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {10.0f,10.0f}, bodyType), RandomColor() }); break;
                 case SPAWN_CUP:
-                    bodies.push_back({ CreateCup(worldId, Selection.spawnPos, {20.0f,20.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateCup(worldId, Selection.spawnPos, {20.0f,20.0f}, bodyType), RandomColor() }); break;
                 case SPAWN_PLANK:
-                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {20.0f,2.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {20.0f,2.0f}, bodyType), RandomColor() }); break;
                 case SPAWN_PELLET:
-                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 3.0f, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 3.0f, bodyType), RandomColor() }); break;
                 case SPAWN_TINYBOX:
-                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, bodyType), RandomColor() }); break;
 				case SPAWN_ROCK:
-					bodies.push_back({ CreateRock(worldId, Selection.spawnPos, b2_dynamicBody), RandomColor() }); break;
+					bodies.push_back({ CreateRock(worldId, Selection.spawnPos, bodyType), RandomColor() }); break;
                 case SPAWN_TRIANGLE:
-					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 3, 10.0f, b2_dynamicBody), RandomColor() }); break;
+					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 3, 10.0f, bodyType), RandomColor() }); break;
                 case SPAWN_PENTAGON:
-                    bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 5, 10.0f, bodyType), RandomColor() }); break;
                 case SPAWN_HEXAGON:
-                    bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 6, 10.0f, b2_dynamicBody), RandomColor() }); break;
+                    bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 6, 10.0f, bodyType), RandomColor() }); break;
                 }
+            }
+            else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) || IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
+				spawnMenu.deselectButtons(); // Deselect all buttons
             }
         }
         if (!toolMenu.active && !spawnMenu.active) {
@@ -421,9 +425,9 @@ int main() {
                 }
                 else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
                     if (Selection.numOfBodyIds > 0) {
-                    b2Body_SetFixedRotation(Selection.bodyIds[0], false);
-                    Selection.numOfBodyIds = 0;
-                }
+                        b2Body_SetFixedRotation(Selection.bodyIds[0], false);
+                        Selection.numOfBodyIds = 0;
+					}
                 }
                 if (Selection.numOfBodyIds) {
                     BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
