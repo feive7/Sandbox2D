@@ -36,11 +36,11 @@ GUI toolMenu;
 struct {
     int mode = MODE_DRAG;
     b2Vec2 spawnPos;
-    b2BodyId bodyIds[10];
-    int numOfBodyIds;
-    b2Vec2 localPoints[10];
+    b2BodyId selectedBodyIds[10];
+    int numOfSelected;
+    b2Vec2 selectedPoints[10];
     void clear() {
-        Selection.numOfBodyIds = 0;
+        Selection.numOfSelected = 0;
     }
 } Selection;
 
@@ -408,7 +408,7 @@ int main() {
             viewport.offset.y += mDelta.y;
         }
         if (IsKeyPressed(KEY_R)) {
-            Selection.numOfBodyIds = 0;
+            Selection.numOfSelected = 0;
             ResetScene(worldId, bodies); // Reset scene
             viewport.offset = { 400.0f, 400.0f };
             viewport.rotation = 180;
@@ -417,7 +417,7 @@ int main() {
         }
         if (IsKeyPressed(KEY_Z) || IsKeyPressedRepeat(KEY_Z)) {
             // Undo
-            Selection.numOfBodyIds = 0;
+            Selection.numOfSelected = 0;
             if (bodies.size() > 1) {
                 b2DestroyBody(bodies.back().id); // Destroy last body
                 bodies.pop_back(); // Remove last body
@@ -488,49 +488,49 @@ int main() {
                     // Check if a body is under the mouse
                     for (RayBody body : bodies) {
                         if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
-                            Selection.bodyIds[0] = body.id;
-                            if (IsKeyDown(KEY_LEFT_CONTROL)) Selection.localPoints[0] = {0.0f,0.0f};
-                            else Selection.localPoints[0] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
-                            Selection.numOfBodyIds = 1;
+                            Selection.selectedBodyIds[0] = body.id;
+                            if (IsKeyDown(KEY_LEFT_CONTROL)) Selection.selectedPoints[0] = {0.0f,0.0f};
+                            else Selection.selectedPoints[0] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
+                            Selection.numOfSelected = 1;
                             break;
                         }
                     }
                 }
                 else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                    if (Selection.numOfBodyIds > 0) {
-                        b2Body_SetFixedRotation(Selection.bodyIds[0], false);
-                        Selection.numOfBodyIds = 0;
+                    if (Selection.numOfSelected > 0) {
+                        b2Body_SetFixedRotation(Selection.selectedBodyIds[0], false);
+                        Selection.numOfSelected = 0;
 					}
                 }
-                if (Selection.numOfBodyIds) {
-                    BodyUnfreeze(Selection.bodyIds[0]); // Unfreeze the body
+                if (Selection.numOfSelected) {
+                    BodyUnfreeze(Selection.selectedBodyIds[0]); // Unfreeze the body
                     //DragBody(Selection.bodyIds[0], { mWorldPos.x,mWorldPos.y }, Selection.localPoints[0]);		
 
                     if (IsKeyDown(KEY_A)) {
                         // Allow rotation
-                        b2Body_SetFixedRotation(Selection.bodyIds[0], false);
-                        BodyRotate(Selection.bodyIds[0], -0.05f, Selection.localPoints[0], {mWorldPos.x,mWorldPos.y});
+                        b2Body_SetFixedRotation(Selection.selectedBodyIds[0], false);
+                        BodyRotate(Selection.selectedBodyIds[0], -0.05f, Selection.selectedPoints[0], {mWorldPos.x,mWorldPos.y});
                     }
                     else if (IsKeyDown(KEY_D)) {
                         // Allow rotation
-                        b2Body_SetFixedRotation(Selection.bodyIds[0], false);
-                        BodyRotate(Selection.bodyIds[0], 0.05f, Selection.localPoints[0], { mWorldPos.x,mWorldPos.y });
+                        b2Body_SetFixedRotation(Selection.selectedBodyIds[0], false);
+                        BodyRotate(Selection.selectedBodyIds[0], 0.05f, Selection.selectedPoints[0], { mWorldPos.x,mWorldPos.y });
                     }
                     else {
                         // Lock rotation
-                        b2Body_SetFixedRotation(Selection.bodyIds[0], true);
+                        b2Body_SetFixedRotation(Selection.selectedBodyIds[0], true);
 
                         // Keep body aligned to mouse without rotating
-                        b2Vec2 worldPoint = b2Body_GetWorldPoint(Selection.bodyIds[0], Selection.localPoints[0]);
-                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, b2Sub(worldPoint, b2Body_GetPosition(Selection.bodyIds[0])));
-                        b2Body_SetTargetTransform(Selection.bodyIds[0], { newPos, b2Body_GetRotation(Selection.bodyIds[0]) }, 0.01f);
+                        b2Vec2 worldPoint = b2Body_GetWorldPoint(Selection.selectedBodyIds[0], Selection.selectedPoints[0]);
+                        b2Vec2 newPos = b2Sub({ mWorldPos.x, mWorldPos.y }, b2Sub(worldPoint, b2Body_GetPosition(Selection.selectedBodyIds[0])));
+                        b2Body_SetTargetTransform(Selection.selectedBodyIds[0], { newPos, b2Body_GetRotation(Selection.selectedBodyIds[0]) }, 0.01f);
                     }
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-                        BodyFreeze(Selection.bodyIds[0]); // Freeze the body
+                        BodyFreeze(Selection.selectedBodyIds[0]); // Freeze the body
                         Selection.clear(); // Deselect
                     }
-                    if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.bodyIds[0])) {
+                    if (IsKeyPressed(KEY_DELETE) && b2Body_IsValid(Selection.selectedBodyIds[0])) {
                         // Delete code
                     }
                 }
@@ -541,18 +541,18 @@ int main() {
                     for (RayBody body : bodies) {
                         if (BodyContains(body.id, { mWorldPos.x,mWorldPos.y })) {
                             // Add body to selection
-                            Selection.bodyIds[Selection.numOfBodyIds] = body.id;
-                            Selection.localPoints[Selection.numOfBodyIds] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
-                            Selection.numOfBodyIds++;
+                            Selection.selectedBodyIds[Selection.numOfSelected] = body.id;
+                            Selection.selectedPoints[Selection.numOfSelected] = b2Body_GetLocalPoint(body.id, { mWorldPos.x,mWorldPos.y });
+                            Selection.numOfSelected++;
                             break;
                         }
                     }
                 }
-                if (Selection.numOfBodyIds == 2) {
-                    if (Selection.bodyIds[0].index1 != Selection.bodyIds[1].index1) { // Make sure we aren't jointing an object to itself
+                if (Selection.numOfSelected == 2) {
+                    if (Selection.selectedBodyIds[0].index1 != Selection.selectedBodyIds[1].index1) { // Make sure we aren't jointing an object to itself
                         //WeldBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1], Selection.localPoints[0], Selection.localPoints[1]);
-                        WeldBodies(worldId, Selection.bodyIds[0], Selection.bodyIds[1]);
-                        printf("Jointed bodies %i and %i\n", Selection.bodyIds[0].index1, Selection.bodyIds[1].index1);
+                        WeldBodies(worldId, Selection.selectedBodyIds[0], Selection.selectedBodyIds[1]);
+                        printf("Jointed bodies %i and %i\n", Selection.selectedBodyIds[0].index1, Selection.selectedBodyIds[1].index1);
                     }
                     else {
                         printf("Ignoring self joint\n");
@@ -600,13 +600,13 @@ int main() {
                 }
 			}
             else if (Selection.mode == MODE_SEGMENT) {
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Selection.numOfBodyIds == 0) {
-                    Selection.localPoints[0] = { mWorldPos.x,mWorldPos.y };
-                    Selection.numOfBodyIds++;
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Selection.numOfSelected == 0) {
+                    Selection.selectedPoints[0] = { mWorldPos.x,mWorldPos.y };
+                    Selection.numOfSelected++;
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Selection.numOfBodyIds == 1) {
-                    Selection.localPoints[1] = { mWorldPos.x,mWorldPos.y };
-					b2BodyId segmentBodyId = CreateSegment(worldId, Selection.localPoints[0], Selection.localPoints[1], b2_staticBody);
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Selection.numOfSelected == 1) {
+                    Selection.selectedPoints[1] = { mWorldPos.x,mWorldPos.y };
+					b2BodyId segmentBodyId = CreateSegment(worldId, Selection.selectedPoints[0], Selection.selectedPoints[1], b2_staticBody);
 					bodies.push_back({ segmentBodyId, BLACK });
 					Selection.clear(); // Clear selection
                 }
@@ -633,13 +633,13 @@ int main() {
         }
         rlEnd();
         
-        if (Selection.mode == MODE_SEGMENT && Selection.numOfBodyIds) {
-			DrawLine(Selection.localPoints[0].x, Selection.localPoints[0].y, mWorldPos.x, mWorldPos.y, BLACK);
+        if (Selection.mode == MODE_SEGMENT && Selection.numOfSelected) {
+			DrawLine(Selection.selectedPoints[0].x, Selection.selectedPoints[0].y, mWorldPos.x, mWorldPos.y, BLACK);
         }
         
-        if (Selection.mode == MODE_WELD && Selection.numOfBodyIds) {
-            if (b2Body_IsValid(Selection.bodyIds[0])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[0]));
-            if (b2Body_IsValid(Selection.bodyIds[1])) DrawAABB(b2Body_ComputeAABB(Selection.bodyIds[1]));
+        if (Selection.mode == MODE_WELD && Selection.numOfSelected) {
+            if (b2Body_IsValid(Selection.selectedBodyIds[0])) DrawAABB(b2Body_ComputeAABB(Selection.selectedBodyIds[0]));
+            if (b2Body_IsValid(Selection.selectedBodyIds[1])) DrawAABB(b2Body_ComputeAABB(Selection.selectedBodyIds[1]));
         }
 
         EndMode2D();
