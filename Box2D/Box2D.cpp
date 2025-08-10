@@ -145,6 +145,18 @@ void InitGUIs() {
         .text = "Tiny Box",
         .id = SPAWN_TINYBOX,
         });
+    spawnMenu.addButton({
+        .x = 408,
+        .y = 135,
+        .width = 100,
+        .height = 50,
+        .fontSize = 20,
+        .bgColor = GRAY,
+        .bgColorSelected = GREEN,
+        .fontColor = WHITE,
+        .text = "Rock",
+        .id = SPAWN_ROCK,
+        });
     // Regular Polygons
     spawnMenu.addLabel({
         .x = 0,
@@ -381,6 +393,8 @@ int main() {
                     bodies.push_back({ CreateBall(worldId, Selection.spawnPos, 3.0f, b2_dynamicBody), RandomColor() }); break;
                 case SPAWN_TINYBOX:
                     bodies.push_back({ CreateBox(worldId, Selection.spawnPos, {3.0f,3.0f}, b2_dynamicBody), RandomColor() }); break;
+				case SPAWN_ROCK:
+					bodies.push_back({ CreateRock(worldId, Selection.spawnPos, b2_dynamicBody), RandomColor() }); break;
                 case SPAWN_TRIANGLE:
 					bodies.push_back({ CreateRegularPolygon(worldId, Selection.spawnPos, 3, 10.0f, b2_dynamicBody), RandomColor() }); break;
                 case SPAWN_PENTAGON:
