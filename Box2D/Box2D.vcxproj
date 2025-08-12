@@ -141,6 +141,7 @@
     <ClInclude Include="BodyOps.h" />
     <ClInclude Include="raybox.h" />
     <ClInclude Include="RLGUI.h" />
+    <ClInclude Include="Save.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

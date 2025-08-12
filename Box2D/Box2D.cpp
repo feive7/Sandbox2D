@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <rlgl.h>
 #include <RLGUI.h>
+#include <raygui/raygui.h>
 #include <raybox.h>
 #include <BodyOps.h>
 
