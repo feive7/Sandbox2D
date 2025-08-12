@@ -153,9 +153,17 @@ Color RandomColor() {
     return { r,g,b,255 };
 }
 
+struct BodyState {
+    bool active;
+    b2Transform transform;
+    b2Vec2 linearVelocity;
+    float angularVelocity;
+    float linearDamping;
+};
 struct RayBody {
     b2BodyId id;
     Color color;
+    BodyState state;
     void draw() {
         DrawBody(id, color);
     }
