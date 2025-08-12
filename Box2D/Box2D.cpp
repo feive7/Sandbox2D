@@ -308,6 +308,8 @@ void InitGUIs() {
                 "Q: Open Menu\n"
 				"Scroll Wheel: Zoom Viewport\n"
 				"Middle Mouse Button: Pan Viewport\n"
+                "S: Savestate\n"
+                "L: Loadstate\n"
         });
     toolMenu.sizeToFit();
 }
@@ -433,6 +435,24 @@ int main() {
         if (IsKeyPressed(KEY_FOUR)) SetMode(MODE_DRAW);
         if (IsKeyPressed(KEY_FIVE)) SetMode(MODE_EXPLODE);
         if (IsKeyPressed(KEY_SIX)) SetMode(MODE_SEGMENT);
+        if (IsKeyPressed(KEY_S)) {
+            for (RayBody& body : bodies) {
+                body.state.active = true;
+                body.state.transform = b2Body_GetTransform(body.id);
+                body.state.linearVelocity = b2Body_GetLinearVelocity(body.id);
+                body.state.angularVelocity = b2Body_GetAngularVelocity(body.id);
+            }
+        }
+        if (IsKeyPressed(KEY_L)) {
+            printf("Loading...\n");
+            for (RayBody& body : bodies) {
+                if (body.state.active) {
+                    b2Body_SetTransform(body.id, body.state.transform.p, body.state.transform.q);
+                    b2Body_SetLinearVelocity(body.id, body.state.linearVelocity);
+                    b2Body_SetAngularVelocity(body.id, body.state.angularVelocity);
+                }
+            }
+        }
         spawnMenu.active = IsKeyDown(KEY_Q);
 		toolMenu.active = IsKeyDown(KEY_C);
 
