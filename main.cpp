@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <box2d.h>
-#include <raylib.h>
-#include <rlgl.h>
-#include <RLGUI.h>
-#include <raygui/raygui.h>
-#include <raybox.h>
-#include <BodyOps.h>
+#include "box2d/box2d.h"
+#include "raylib.h"
+#include "rlgl.h"
+#include "RLGUI.h"
+#include "raygui/raygui.h"
+#include "raybox.h"
+#include "BodyOps.h"
 
 enum Selection_mode {
     MODE_DRAG,
@@ -41,7 +41,7 @@ struct {
     int numOfSelected;
     b2Vec2 selectedPoints[10];
     void clear() {
-        Selection.numOfSelected = 0;
+        numOfSelected = 0;
     }
 } Selection;
 
